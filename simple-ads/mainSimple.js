@@ -16,18 +16,30 @@ function startClient(handles) {
 
 window.onload = startClient;
 
-var countUp; 
-var counter;
+var countUp = document.getElementById("value1");; 
+var counter = document.getElementById("value2");;
 
 function loadExample(){
-    console.log('Example loaded');
-
-
     var pollValue1 = function(){
-        Plc.readBool({name: "MAIN.countUp", jvar: "countUp"})
+        Plc.readBool({name: "MAIN.countUp", jvar: "countUp.innerText"})
 
-        Plc.readDint({name: "MAIN.counter", jvar: "counter"})
+        Plc.readDint({name: "MAIN.counter", jvar: "counter.innerText"})
     }
+
+    console.log('Poll value loaded');
+
+    document.getElementById("button1").onclick = function(){
+        var startStop = document.getElementById("startStop").checked;
+        Plc.writeBool({name: "MAIN.countUp", val: !countUp, oc: pollValue1, ocd: 100});
+    }
+
+    document.getElementById("button2").onclick = function(){
+        var startValue = document.getElementById('startValue').value;
+        Plc.writeDint({name: "MAIN.counter", val: startValue, oc: pollValue1, ocd: 100});
+    }
+
+    console.log("Write value loaded");
+
 
     setInterval(() => {
         pollValue1(); 

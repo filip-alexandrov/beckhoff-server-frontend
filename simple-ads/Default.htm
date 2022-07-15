@@ -5,12 +5,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+
+    <script defer src="tame.js"></script>
+    <script defer src="mainSimple.js"></script>
   </head>
   <body>
     <div id="variable1">Loading...</div>
     <div id="variable2">Loading...</div>
-    <div id="variable3">Loading...</div>
-    <script src="tame.js"></script>
-    <script src="main.js"></script>
+
+    <input type="checkbox" id="startStop" />
+    <button id="button1">Start/Stop</button>
+
+    <input
+      type="number"
+      placeholder="Enter number to start from"
+      id="startValue"
+    />
+    <button id="button2">Write value</button>
   </body>
 </html>
