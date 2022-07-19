@@ -1,7 +1,7 @@
 import App from './App.svelte'
 
 if (import.meta.env.DEV) {
-    await import('./lib/hmr')
+    await import('./old-components/lib/hmr')
 }
 
 const app = new App({

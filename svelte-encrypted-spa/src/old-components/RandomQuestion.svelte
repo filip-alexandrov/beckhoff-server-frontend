@@ -1,12 +1,12 @@
 <script context="module" lang="ts">
     import Question from '../components/Question.svelte'
-    import { questions } from '../data/questions'
-    import {getRandomItem} from '../lib/utils'
-    import type { Question as QuestionType } from '../lib/types'
+    import { questions } from './data/questions'
+    import {getRandomItem} from './lib/utils'
+    import type { Question as QuestionType } from './lib/types'
 </script>
 
 <script lang="ts">
-    import { question, viewedQuestions } from '../lib/stores'
+    import { question, viewedQuestions } from './lib/stores'
 
     function getQuestionNotViewedBefore() {
         let next: QuestionType

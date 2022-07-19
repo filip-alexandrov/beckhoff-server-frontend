@@ -195,11 +195,11 @@
 <div id="tester" />
 
 <div class="options">
-    <a class="switch">
-        Switch to Mariana Trench
+    <a href="/test2" class="switch">
+        Switch to Mt. Everest
         <img src={arrowSvg} alt="" />
     </a>
-    <div class="header">Mt. Everest</div>
+    <div class="header">Mariana Trench</div>
     <div>
         <p>Change scaling: <span>{sliderValue}%</span></p>
     </div>

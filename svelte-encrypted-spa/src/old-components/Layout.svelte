@@ -2,11 +2,11 @@
     import { path } from 'svelte-pathfinder'
 
     import Link from '../components/Link.svelte'
-    import { appName } from '../lib/constants'
+    import { appName } from './lib/constants'
 </script>
 
 <script lang="ts">
-    import { bgColor } from '../lib/stores'
+    import { bgColor } from './lib/stores'
 
     export let title = ''
 
