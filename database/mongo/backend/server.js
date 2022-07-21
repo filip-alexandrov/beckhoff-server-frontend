@@ -4,6 +4,7 @@ const { errorHandler } = require("./middleware/errorMiddleware");
 const colors = require("colors");
 const connectDB = require("./config/db");
 
+
 connectDB(); 
 
 const port = process.env.PORT || 80;
@@ -15,6 +16,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // middleware, use different file
 app.use("/api/goals", require("./routes/goalRoutes"));
+app.use("/api/users", require("./routes/userRoutes"));
 
 app.use(errorHandler);
 
