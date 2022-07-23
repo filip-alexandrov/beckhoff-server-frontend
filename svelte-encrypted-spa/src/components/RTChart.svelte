@@ -5,10 +5,9 @@
     // array series
     let dataX = []
     let dataY = []
-    for (let i = 0; i < 10; i = i + 0.15) {
-        dataX.push(i)
-        dataY.push(Math.random() * 100)
-    }
+
+    dataX.push(Date.now())
+    dataY.push(Math.random() * 100)
 
     let options = {
         colors: ['#DFE300', '#4576b5'],
@@ -21,7 +20,7 @@
         },
         series: [
             {
-                data: dataY,
+                data: dataY.slice(),
             },
         ],
         chart: {
@@ -33,7 +32,7 @@
                 enabled: true,
                 easing: 'linear',
                 dynamicAnimation: {
-                    speed: 1000,
+                    speed: 500,
                 },
             },
             toolbar: {
@@ -58,6 +57,7 @@
                 show: true,
                 color: '#fff',
                 width: '3px',
+                offsetX: -5,
             },
             title: {
                 text: 'Force',
@@ -81,8 +81,7 @@
                 },
             },
             axisTicks: {
-                show: true,
-                color: '#fff',
+                show: false,
             },
             crosshairs: {
                 show: true,
@@ -97,7 +96,7 @@
             },
         },
         xaxis: {
-            type: 'numeric',
+            type: 'datetime',
             categories: dataX,
             decimalsInFloat: 2,
             axisBorder: {
@@ -132,7 +131,7 @@
                     fontFamily: 'Outfit, Arial, sans-serif',
                 },
             },
-            /* range: 20, */
+            range: 10000, // in milliseconds
         },
         legend: {
             show: false,
@@ -156,7 +155,6 @@
             },
             theme: 'dark',
 
-            /*  custom: "<div />", */
         },
     }
 
@@ -165,18 +163,18 @@
 
         chart.render()
 
-         setInterval(function () {
-            dataY.push(Math.floor(Math.random() * 100))
-            dataY.shift(); 
-            dataX.push(dataX.length)
-            dataX.shift(); 
+        setInterval(function () {
+            if (dataY.length < 50) {
+                dataY.push(Math.floor(Math.random() * 100))
+                dataX.push(Date.now())
 
-            chart.updateSeries([
-                {
-                    data: dataX,
-                },
-            ])
-        }, 1000)
+                chart.updateSeries([
+                    {
+                        data: dataY,
+                    },
+                ])
+            }
+        }, 500)
     })
 
     let chartClicked = false

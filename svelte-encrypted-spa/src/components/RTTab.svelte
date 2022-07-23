@@ -129,11 +129,11 @@
         padding: 6px 0;
         cursor: pointer;
     }
-    .selection:hover + hr {
+   /*  .selection:hover + hr {
         border: 1px solid #f0f0f0;
-    }
+    } */
     hr {
-        width: 80%;
+        width: 90%;
         border: 1px solid #424242;
         margin: auto;
         border-radius: 2px;

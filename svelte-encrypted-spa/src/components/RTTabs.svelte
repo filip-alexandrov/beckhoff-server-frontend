@@ -12,6 +12,12 @@
     import { clickOutside } from './../helpers/clickOutside.js'
     import { temperature, baumer, hbm, idl } from '../store/sensors'
     import RTTab from './RTTab.svelte'
+    import chartSettingsSvg from '../assets/chartSettings.svg'
+    import pauseSvg from '../assets/pause.svg'
+    import chartResume from '../assets/chartResume.svg'
+    import { createEventDispatcher } from 'svelte'
+
+    const dispatch = createEventDispatcher()
 
     let highlightedSensor: string = 'Temperature #1'
     function handleSensorSelection(event) {
@@ -22,19 +28,61 @@
     let isOpen = false
     setTimeout(() => {
         isOpen = true
-    }, 10000);
+    }, 10000)
+
+    let isPaused = true
+    function handlePause(){
+        isPaused = !isPaused
+
+        dispatch('pause', { isPaused })
+    }
 </script>
 
-<div class="holder">
-     <RTTab {highlightedSensor} dropdownLeftMargin="30px" sensorData={$temperature} on:sensorSelection={handleSensorSelection} />
-     <RTTab {highlightedSensor} dropdownLeftMargin="200px" sensorData={$baumer} on:sensorSelection={handleSensorSelection} />
-     <RTTab {highlightedSensor} dropdownLeftMargin="340px" sensorData={$hbm} on:sensorSelection={handleSensorSelection} />
-     <RTTab {highlightedSensor} dropdownLeftMargin="450px" sensorData={$idl} on:sensorSelection={handleSensorSelection} />
-    
+<div class="tab-holder">
+    <div class="sensors">
+        <RTTab
+            {highlightedSensor}
+            dropdownLeftMargin="30px"
+            sensorData={$temperature}
+            on:sensorSelection={handleSensorSelection}
+        />
+        <RTTab
+            {highlightedSensor}
+            dropdownLeftMargin="200px"
+            sensorData={$baumer}
+            on:sensorSelection={handleSensorSelection}
+        />
+        <RTTab
+            {highlightedSensor}
+            dropdownLeftMargin="340px"
+            sensorData={$hbm}
+            on:sensorSelection={handleSensorSelection}
+        />
+        <RTTab
+            {highlightedSensor}
+            dropdownLeftMargin="450px"
+            sensorData={$idl}
+            on:sensorSelection={handleSensorSelection}
+        />
+    </div>
+
+    <div class="options">
+        <p on:click={handlePause} class:hide={isPaused}><img src={pauseSvg} alt="" />Pause</p>
+
+        <p on:click={handlePause} class:hide={!isPaused}><img src={chartResume} alt="" />Resume</p>
+
+        <p><img src={chartSettingsSvg} alt="" />Settings</p>
+
+    </div>
 </div>
 
 <style>
-    .holder {
+    .tab-holder {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .sensors {
         height: 100%;
         width: 100%;
         position: relative;
@@ -46,6 +94,22 @@
 
         font-weight: 400;
         font-size: 17px;
-    
+    }
+    .options {
+        display: flex;
+    }
+    img {
+        height: 25px;
+        width: 30px;
+        margin-right: 2px;
+    }
+    p {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        margin-right: 20px;
+    }
+    .hide{
+        display: none;
     }
 </style>
