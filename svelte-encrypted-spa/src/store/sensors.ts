@@ -1,43 +1,48 @@
-import { writable } from "svelte/store";
+import { writable } from 'svelte/store'
 
 // Generate example array of floats of length 20 and 2 digit precision
 const generateData = () => {
-    const data = [];
-    for (let i = 0; i < 20; i++) {
-        data.push(Math.random().toFixed(2));
-    }
-    return data;
+    setInterval(() => {
+        for (let i = 1; i <= 8; i++) {
+            temperature.update((last) => {
+                return {
+                    ...last,
+                    [`Temperature #${i}`]: last[`Temperature #${i}`].push(
+                        Math.random().toFixed(2),
+                    ),
+                }
+            })
+        }
+    }, 750)
 }
 
-
-
 export const temperature = writable({
-    "Temperature #1": generateData(), 
-    "Temperature #2": generateData(),
-    "Temperature #3": generateData(),
-    "Temperature #4": generateData(),
-    "Temperature #5": generateData(),
-    "Temperature #6": generateData(),
-    "Temperature #7": generateData(),
-    "Temperature #8": generateData(),
-});
+    'Temperature #1': [0],
+    'Temperature #2': [0],
+    'Temperature #3': [0],
+    'Temperature #4': [0],
+    'Temperature #5': [0],
+    'Temperature #6': [0],
+    'Temperature #7': [0],
+    'Temperature #8': [0],
+})
 export const baumer = writable({
-    "Baumer #1": generateData(),
-    "Baumer #2": generateData(),
-    "Baumer #3": generateData(),
-    "Baumer #4": generateData(),
-});
+    'Baumer #1': [0],
+    'Baumer #2': [0],
+    'Baumer #3': [0],
+    'Baumer #4': [0],
+})
 export const hbm = writable({
-    "HBM #1": generateData(),
-});
+    'HBM #1': [0],
+})
 export const idl = writable({
-    "IDL #1": generateData(),
-    "IDL #2": generateData(),
-    "IDL #3": generateData(),
-    "IDL #4": generateData(),
-    "IDL #5": generateData(),
-    "IDL #6": generateData(),
-});
+    'IDL #1': [0],
+    'IDL #2': [0],
+    'IDL #3': [0],
+    'IDL #4': [0],
+    'IDL #5': [0],
+    'IDL #6': [0],
+})
 export const orientus = writable({
-    "Orientus #1": generateData(),
-});
+    'Orientus #1': [0],
+})

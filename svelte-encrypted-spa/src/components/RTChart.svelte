@@ -1,6 +1,7 @@
-<script>
+<script lang="ts">
     import ApexCharts from 'apexcharts'
     import { onMount } from 'svelte'
+    import RTTabs from './RTTabs.svelte'
 
     // array series
     let dataX = []
@@ -32,7 +33,7 @@
                 enabled: true,
                 easing: 'linear',
                 dynamicAnimation: {
-                    speed: 500,
+                    speed: 750,
                 },
             },
             toolbar: {
@@ -154,12 +155,14 @@
                 offsetY: 0,
             },
             theme: 'dark',
-
         },
     }
 
     onMount(() => {
-        let chart = new ApexCharts(document.querySelector('#chart'), options)
+        let chart = new ApexCharts(
+            document.querySelector('#' + chartId),
+            options,
+        )
 
         chart.render()
 
@@ -168,59 +171,52 @@
                 dataY.push(Math.floor(Math.random() * 100))
                 dataX.push(Date.now())
 
-                chart.updateSeries([
+                /* chart.updateSeries([
                     {
                         data: dataY,
                     },
+                ]) */
+
+                chart.appendData([
+                    {
+                        data: [Math.floor(Math.random() * 100)],
+                    },
                 ])
             }
-        }, 500)
+        }, 750)
     })
 
-    let chartClicked = false
-    function handleClick() {
-        if (chartClicked == false) {
-            // open tooltip with detailed info
-            ApexCharts.exec(
-                'realtime',
-                'updateOptions',
-                {
-                    tooltip: {
-                        fixed: {
-                            enabled: false,
-                        },
-                    },
-                },
-                false,
-                true,
-            )
-        } else {
-            // close tooltip with detailed info
-            ApexCharts.exec(
-                'realtime',
-                'updateOptions',
-                {
-                    tooltip: {
-                        fixed: {
-                            enabled: true,
-                            offsetX: 2000,
-                            offsetY: 0,
-                        },
-                    },
-                },
-                false,
-                true,
-            )
-        }
-
-        chartClicked = !chartClicked
+    let isPaused = false
+    function handlePause(event) {
+        // Pause the chart
+        isPaused = event.detail.isPaused
     }
+
+    let activeSensor = 'Temperature #1'
+    function handleSensorSelection(event) {
+        activeSensor = event.detail.sensorName
+    }
+
+    export let chartId: string
 </script>
 
-<div on:click={handleClick} id="chart" />
+<div class="container">
+    <div class="tabs">
+        <RTTabs
+            on:sensorSelection={handleSensorSelection}
+            on:pause={handlePause}
+        />
+    </div>
+    <div id={chartId} class="chart" />
+</div>
 
 <style>
-    #chart {
+    .container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+    .chart {
         width: 100%;
         height: 100%;
         z-index: -1;

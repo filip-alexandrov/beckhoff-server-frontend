@@ -8,14 +8,10 @@
 
 <div class="main">
     <div class="charts">
-        <div class="tabs1"><RTTabs /></div>
-        <div class="tabs2">tabs2</div>
-        <div class="chart1"><RTChart /></div>
-        <div class="chart2">chart2</div>
-        <div class="tabs3">tabs3</div>
-        <div class="tabs4">tabs4</div>
-        <div class="chart3">chart3</div>
-        <div class="chart4">chart4</div>
+        <div class="chart1"><RTChart chartId="chart-1" /></div>
+        <div class="chart2"><!-- <RTChart chartId= "chart-2" /> --></div>
+        <div class="chart3"><!-- <RTChart chartId= "chart-3" /> --></div>
+        <div class="chart4"><!-- <RTChart chartId= "chart-4" /> --></div>
         <div class="gauges">gauges</div>
         <!-- <div class="gauges">gauges</div> -->
     </div>
@@ -38,21 +34,9 @@
         display: grid;
 
         grid-template-columns: 50% 50%;
-        grid-template-rows: 35px 325px 35px 325px auto;
+        grid-template-rows: 360px 360px auto;
         box-sizing: border-box;
-    }
-
-    .chart1 {
         font-family: 'Outfit' sans-serif;
-    }
-    .chart2 {
-        background-color: red;
-    }
-    .chart3 {
-        background-color: blue;
-    }
-    .chart4 {
-        background-color: yellow;
     }
     .gauges {
         background-color: aqua;

@@ -20,9 +20,18 @@
     const dispatch = createEventDispatcher()
 
     let highlightedSensor: string = 'Temperature #1'
-    function handleSensorSelection(event) {
+    function handleSensorSelection(
+        event: CustomEvent<{ sensorName: string }>,
+        category: string,
+    ) {
         // Update the selected sensor after click in the dropdown menu
         highlightedSensor = event.detail.sensorName
+
+        // Switch chart plot sensor to the newly selected
+        dispatch('sensorSelection', {
+            sensorName: event.detail.sensorName,
+            category,
+        })
     }
 
     let isOpen = false
@@ -30,8 +39,8 @@
         isOpen = true
     }, 10000)
 
-    let isPaused = true
-    function handlePause(){
+    let isPaused = false
+    function handlePause() {
         isPaused = !isPaused
 
         dispatch('pause', { isPaused })
@@ -44,35 +53,40 @@
             {highlightedSensor}
             dropdownLeftMargin="30px"
             sensorData={$temperature}
-            on:sensorSelection={handleSensorSelection}
+            on:sensorSelection={(event) =>
+                handleSensorSelection(event, 'temperature')}
         />
         <RTTab
             {highlightedSensor}
             dropdownLeftMargin="200px"
             sensorData={$baumer}
-            on:sensorSelection={handleSensorSelection}
+            on:sensorSelection={(event) =>
+                handleSensorSelection(event, 'baumer')}
         />
         <RTTab
             {highlightedSensor}
             dropdownLeftMargin="340px"
             sensorData={$hbm}
-            on:sensorSelection={handleSensorSelection}
+            on:sensorSelection={(event) => handleSensorSelection(event, 'hbm')}
         />
         <RTTab
             {highlightedSensor}
             dropdownLeftMargin="450px"
             sensorData={$idl}
-            on:sensorSelection={handleSensorSelection}
+            on:sensorSelection={(event) => handleSensorSelection(event, 'idl')}
         />
     </div>
 
     <div class="options">
-        <p on:click={handlePause} class:hide={isPaused}><img src={pauseSvg} alt="" />Pause</p>
+        <p on:click={handlePause} class:hide={isPaused}>
+            <img src={pauseSvg} alt="" />Pause
+        </p>
 
-        <p on:click={handlePause} class:hide={!isPaused}><img src={chartResume} alt="" />Resume</p>
+        <p on:click={handlePause} class:hide={!isPaused}>
+            <img src={chartResume} alt="" />Resume
+        </p>
 
         <p><img src={chartSettingsSvg} alt="" />Settings</p>
-
     </div>
 </div>
 
@@ -109,7 +123,7 @@
         cursor: pointer;
         margin-right: 20px;
     }
-    .hide{
+    .hide {
         display: none;
     }
 </style>
