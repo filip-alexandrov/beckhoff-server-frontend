@@ -87,8 +87,7 @@
     </div>
 </div>
 
-<!-- TODO: remove ! from display -->
-{#if !displayMotorControl}
+{#if displayMotorControl}
     <div transition:fly={{y: 0, x: 350, easing: linear}}>
         <Motor />
     </div>

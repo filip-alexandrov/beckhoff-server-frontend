@@ -7,7 +7,7 @@
     const dispatch = createEventDispatcher()
 
     export let gaugeId: string = 'gauge'
-    export let selectedSensor = 'Temperature #1'
+    export let selectedSensor = 'OFF'
     export let minGaugeValue = 0
     export let maxGaugeValue = 400
 
@@ -69,6 +69,10 @@
         Plotly.newPlot(gaugeId, data, layout)
 
         interval = setInterval(() => {
+            if(selectedSensor == "OFF"){
+                return; 
+            }
+
             Plotly.update(
                 gaugeId,
                 {

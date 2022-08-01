@@ -155,9 +155,10 @@
 
 
     input {
-        width: 48%;
+        width: 40px;
         background-color: #555;
         color: #fff;
         border-radius: 3px;
+        padding: 0 5px; 
     }
 </style>

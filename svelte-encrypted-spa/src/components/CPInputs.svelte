@@ -94,7 +94,7 @@
         align-items: flex-end;
     }
     .wide {
-        width: 350px;
+        width: 340px;
     }
     input {
         background-color: #323232;
