@@ -1,13 +1,17 @@
-import UI from './UI.svelte'
+import Live from './Live.svelte'
+import Mariana from './Mariana.svelte'
+import Everest from './Everest.svelte'
+import Explore from './Explore.svelte'
+import Visualization from './Visualization.svelte'
 import Test from './Test.svelte'
-import Test2 from './Test2.svelte'
-import Test3 from './Test3.svelte'
 
 const routes = {
-    '/': UI,
-    '/test': Test,
-    "/test2": Test2, 
-    "/test3": Test3, 
+    '/': Live,
+    '/visualization': Visualization,
+    '/explore': Explore,
+    '/mariana': Mariana,
+    '/everest': Everest,
+    "/test": Test
 }
 
 export default routes

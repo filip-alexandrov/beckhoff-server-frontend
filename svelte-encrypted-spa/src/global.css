@@ -13,6 +13,7 @@
     font-weight: 500;
 } */
 
+/* reset user-agent styles */
 * {
     -webkit-tap-highlight-color: transparent;
 }
@@ -32,7 +33,6 @@ button::-moz-focus-inner {
     --right-menu-color: #323232; 
     --hover-color: #484848; 
 }
-
 
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -60,8 +60,24 @@ time, mark, audio, video, button, input,  hr, a {
 body {
     color: white;
     font-family: 'Outfit', sans-serif;
+
+
 }
 
+/* Dont display plotly logo & take screenshot */
 a[href='https://plotly.com/']{
     display: none; 
+}
+.modebar-group{
+    display: none !important;
+}
+
+/* hide arrows on number inputs */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+    -moz-appearance: textfield;
 }

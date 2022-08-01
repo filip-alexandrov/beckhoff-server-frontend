@@ -1,10 +1,16 @@
 <script lang="ts">
+import { goto } from 'svelte-pathfinder';
+
     import logo from '../assets/logo.svg'
+
+    function handleDoubleClick(){
+        goto("/mariana");
+    }
 </script>
 
-<div class="header">
+<div on:dblclick={handleDoubleClick} class="header">
     <img src={logo} alt="" />
-    <h1>Levitation</h1>
+    <a href="/">Levitation</a>
 </div>
 
 <style>

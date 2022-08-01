@@ -1,6 +1,6 @@
 <script lang="ts">
     import ApexCharts from 'apexcharts'
-    import { onMount } from 'svelte'
+    import { onDestroy, onMount } from 'svelte'
     import RTTabs from './RTTabs.svelte'
 
     // array series
@@ -26,7 +26,7 @@
         ],
         chart: {
             id: 'realtime',
-            height: '100%',
+            height: '90%',
             width: '100%',
             type: 'line',
             animations: {
@@ -100,17 +100,23 @@
             type: 'datetime',
             categories: dataX,
             decimalsInFloat: 2,
+            axisTicks: {
+                show: false,
+            },
             axisBorder: {
                 show: true,
                 color: '#fff',
                 height: '3px',
             },
             labels: {
+                show: false,
+                format: 'HH:mm:ss',
                 style: {
                     colors: '#fff',
                     fontFamily: 'Outfit, Arial, sans-serif',
                     fontWeight: 400,
                 },
+                datetimeUTC: false
             },
             title: {
                 text: 'Time',
@@ -125,7 +131,11 @@
             },
             tooltip: {
                 enabled: true,
-                formatter: undefined,
+                formatter: function (val, opts) {
+                    let date = new Date(val); 
+                    let formatted = date.toTimeString().split(' ')[0]
+                    return `${formatted}`;
+                },
                 offsetY: 7,
                 style: {
                     fontSize: '15px',
@@ -158,32 +168,47 @@
         },
     }
 
+    let chart; 
+    let interval:  any; 
     onMount(() => {
-        let chart = new ApexCharts(
+        chart = new ApexCharts(
             document.querySelector('#' + chartId),
             options,
         )
 
         chart.render()
 
-        setInterval(function () {
-            if (dataY.length < 50) {
-                dataY.push(Math.floor(Math.random() * 100))
-                dataX.push(Date.now())
-
-                /* chart.updateSeries([
-                    {
-                        data: dataY,
-                    },
-                ]) */
-
-                chart.appendData([
-                    {
-                        data: [Math.floor(Math.random() * 100)],
-                    },
-                ])
+        interval = setInterval(function () {
+            let toAppend = 0
+            if (activeSensor in temperature && !isPaused) {
+                toAppend =
+                    temperature[activeSensor][
+                        temperature[activeSensor].length - 1
+                    ]
+            } else if (activeSensor in baumer && !isPaused) {
+                toAppend = baumer[activeSensor][baumer[activeSensor].length - 1]
+            } else if (activeSensor in hbm && !isPaused) {
+                toAppend = hbm[activeSensor][hbm[activeSensor].length - 1]
+            } else if (activeSensor in idl && !isPaused) {
+                toAppend = idl[activeSensor][idl[activeSensor].length - 1]
             }
+
+            if (isPaused) {
+                return
+            }
+
+            dataX.push(Date.now())
+            chart.appendData([
+                {
+                    data: [toAppend],
+                },
+            ])
         }, 750)
+    })
+
+    onDestroy(() => {
+        clearInterval(interval)
+        chart.destroy()
     })
 
     let isPaused = false
@@ -193,6 +218,7 @@
     }
 
     let activeSensor = 'Temperature #1'
+    let units = "Temperature (°C)"
     function handleSensorSelection(event) {
         activeSensor = event.detail.sensorName
     }

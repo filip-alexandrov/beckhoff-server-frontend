@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import Plotly from 'plotly.js-dist-min'
     import { onMount } from 'svelte'
     import { fade } from 'svelte/transition'
@@ -9,33 +9,31 @@
     import mouseRight from '../assets/mouseRight.svg'
     import mouseScroll from '../assets/mouseScroll.svg'
 
-    /* import xData from './x.json'
-    import yData from './y.json'
-    import zData from './z.json' */
+    let dataFetched = false
+    let mounted = false
 
-    import xData from './dem/x.json'
-    import yData from './dem/y.json'
-    import zData from './dem/z.json'
+    let xData = []
+    let yData = []
+    let zData = []
 
-    var trace1 = {
-        x: xData,
-        y: yData,
-        z: zData,
+    Promise.all([
+        fetch('/static/dem/x_mariana.json'),
+        fetch('/static/dem/y_mariana.json'),
+        fetch('/static/dem/z_mariana.json'),
+    ]).then(async ([x, y, z]) => {
+        xData = await x.json()
+        yData = await y.json()
+        zData = await z.json()
 
-        type: 'surface',
-        colorscale: 'Blackbody',
-        color: 'red',
-        hovertemplate:
-            'X: </b>: %{x:.0f}m<br>' +
-            'Y: %{y:.0f}m<br>' +
-            'Elevation: </b>: %{z:.0f}m<extra></extra>',
+        dataFetched = true
+    })
 
-        showscale: false,
-    }
+    onMount(() => {
+        mounted = true
+    })
 
-    var data = [trace1]
-
-    var my_template = {
+    // Define static plot logic
+    let my_template = {
         layout: {
             xaxis: {
                 gridcolor: 'red',
@@ -49,7 +47,7 @@
         },
     }
 
-    var layout = {
+    let layout = {
         /* width: '100vw',
         height: '100vh', */
         marker: {
@@ -142,24 +140,33 @@
         },
     }
 
-    var config = { responsive: true }
+    let config = { responsive: true }
 
-    onMount(() => {
-        Plotly.newPlot('tester', data, layout, config) /* .then((graph) => {
-            setTimeout(() => {
-                // Init new array of slices
-                let newZArray = []
+    // Plotting logic after data, browser available
+    $: if (dataFetched && mounted) {
+        let trace1 = {
+            x: xData,
+            y: yData,
+            z: zData,
 
-                // loop through all slices
-                for (let subArray of zData) {
-                    // multiply each slice element by the slider value
-                    newZArray.push(subArray.map((x) => x * sliderValue))
-                }
+            type: 'surface',
+            colorscale: 'Blackbody',
+            color: 'red',
+            hovertemplate:
+                'X: </b>: %{x:.0f}m<br>' +
+                'Y: %{y:.0f}m<br>' +
+                'Elevation: </b>: %{z:.0f}m<extra></extra>',
 
-                Plotly.restyle(graph, 'z', [newZArray])
-            }, 2000)
-        }) */
-    })
+            showscale: false,
+        }
+
+        let data = [trace1]
+
+        Plotly.newPlot('tester', data, layout, config)
+
+        // Prevent multiple runs:
+        mounted = false
+    }
 
     let sliderValue = 100
     function handleSliderChange() {
@@ -175,6 +182,7 @@
         // Update the plot with the new data
         Plotly.restyle('tester', 'z', [newZArray]) */
 
+        // TODO: Uncomment
         layout.scene.aspectmode = 'manual'
         layout.scene.aspectratio.z = sliderValue / 100
 
@@ -192,62 +200,63 @@
     on:mousedown={handleHideInstruction}
 />
 
-<div id="tester" />
-
-<div class="options">
-    <a href="/test" class="switch">
-        Switch to Mariana Trench
-        <img src={arrowSvg} alt="" />
-    </a>
-    <div class="header">Mt. Everest</div>
-    <div>
-        <p>Change scaling: <span>{sliderValue}%</span></p>
-    </div>
-    <div class="slider">
-        <span style="margin-right: 5px">0%</span>
-        <input
-            on:mouseup={handleSliderChange}
-            type="range"
-            min="1"
-            max="1000"
-            bind:value={sliderValue}
-            style="background: linear-gradient(
+<div id="tester">
+    <div class="options">
+        <a href="/everest" class="switch">
+            Switch to Mt. Everest
+            <img src={arrowSvg} alt="" />
+        </a>
+        <div class="header">Mariana Trench</div>
+        <div>
+            <p>Change scaling: <span>{sliderValue}%</span></p>
+        </div>
+        <div class="slider">
+            <span style="margin-right: 5px">0%</span>
+            <input
+                on:mouseup={handleSliderChange}
+                type="range"
+                min="1"
+                max="1000"
+                bind:value={sliderValue}
+                style="background: linear-gradient(
                 to right,
                 #fff 0%,
                 #fff {sliderValue / 10}%,
                 #9e9e9e {sliderValue / 10}%,
                 #9e9e9e 100%
             );"
-        />
-        <span style="margin-left: 5px">1000%</span>
+            />
+            <span style="margin-left: 5px">1000%</span>
+        </div>
     </div>
-</div>
 
-{#if !hideInstruction}
-    <div
-        transition:fade={{ delay: 250, duration: 300 }}
-        class:hide={hideInstruction}
-        class="instructions"
-    >
-        <div>
-            <img src={mouseLeft} alt="" />
-            <span>Rotate</span>
+    {#if !hideInstruction}
+        <div
+            transition:fade={{ delay: 250, duration: 300 }}
+            class:hide={hideInstruction}
+            class="instructions"
+        >
+            <div>
+                <img src={mouseLeft} alt="" />
+                <span>Rotate</span>
+            </div>
+            <div>
+                <img src={mouseScroll} alt="" />
+                <span>Zoom</span>
+            </div>
+            <div>
+                <img src={mouseRight} alt="" />
+                <span>Drag</span>
+            </div>
         </div>
-        <div>
-            <img src={mouseScroll} alt="" />
-            <span>Zoom</span>
-        </div>
-        <div>
-            <img src={mouseRight} alt="" />
-            <span>Drag</span>
-        </div>
-    </div>
-{/if}
+    {/if}
+</div>
 
 <style>
     #tester {
-        height: 100vh;
-        width: 100vw;
+        height: 100%;
+        width: 100%;
+        position: relative;
     }
     .options {
         position: absolute;
@@ -259,7 +268,7 @@
         font-weight: 400;
         flex-direction: column;
 
-        -webkit-user-select: none; 
+        -webkit-user-select: none;
         user-select: none;
     }
 

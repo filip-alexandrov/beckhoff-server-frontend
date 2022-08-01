@@ -1,18 +1,17 @@
 <script lang="ts">
-    import logo from '../assets/logo.svg'
-    import TopNav from '../components/TopNav.svelte'
+
+    import TopNav from './NavTop.svelte'
     import NavHeader from '../components/NavHeader.svelte'
     import NavTemp from '../components/NavTemp.svelte'
     import NavWeight from '../components/NavWeight.svelte'
     import NavDistance from '../components/NavDistance.svelte'
     import NavOrientation from '../components/NavOrientation.svelte'
-    import Main from '../components/Main.svelte'
 </script>
 
 <div class="full-screen">
     <div class="grid-container">
         <div class="main">
-            <Main />
+            <slot></slot>
         </div>
         <div>
             <NavHeader />
@@ -30,7 +29,10 @@
     </div>
 </div>
 
+
+
 <style>
+    
     .grid-container {
         height: 100vh;
         width: 1920px;
