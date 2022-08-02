@@ -1,5 +1,4 @@
 <script lang="ts">
-
     import TopNav from './NavTop.svelte'
     import NavHeader from '../components/NavHeader.svelte'
     import NavTemp from '../components/NavTemp.svelte'
@@ -11,7 +10,7 @@
 <div class="full-screen">
     <div class="grid-container">
         <div class="main">
-            <slot></slot>
+            <slot />
         </div>
         <div>
             <NavHeader />
@@ -29,10 +28,8 @@
     </div>
 </div>
 
-
-
 <style>
-    
+
     .grid-container {
         height: 100vh;
         width: 1920px;

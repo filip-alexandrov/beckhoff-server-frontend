@@ -3,6 +3,7 @@
     import GaugeChart from './GaugeChart.svelte'
     import chartSettingsSvg from '../assets/chartSettings.svg'
     import gaugeCloseSvg from "../assets/checkmark.svg"
+    import onOffSvg from '../assets/on-off.svg'
 
     let sensorData = { ...$temperature, ...$baumer, ...$hbm, ...$idl }
 
@@ -18,9 +19,13 @@
 
     let minGaugeValue = 0
     let maxGaugeValue = 400
-    function handleSetGaugeValues() {}
 
     export let gaugeId: string = 'gauge'
+
+    let turnedOn = false; 
+    function handlePowerButton(){
+        turnedOn = !turnedOn;
+    }
 </script>
 
 {#if !showSettings}
@@ -29,17 +34,25 @@
         {selectedSensor}
         {minGaugeValue}
         {maxGaugeValue}
+        {turnedOn}
         on:show-settings={handleChartSettings}
     />
 {:else if showSettings}
     <div class="gauge">
         <div class="overlay">
             <div class="sensor-name">
-                Settings <img
+                Settings <span>
+                    <img
+                    on:click={handlePowerButton}
+                    src={onOffSvg}
+                    alt=""
+                />
+                    <img
                     on:click={handleChartSettings}
                     src={gaugeCloseSvg}
                     alt=""
                 />
+                </span>
             </div>
             <div class="link-3d">Select sensor:</div>
             <div class="selection">
@@ -99,14 +112,19 @@
         align-items: center;
         justify-content: space-between;
     }
+    span {
+        display: flex;
+        align-items: center;
+    }
+    span img{
+        cursor: pointer; 
+        margin-left: 5px; 
+    }
     .link-3d {
         font-size: 13px;
         color: #87888c;
         margin-top: 2px;
         margin-bottom: 5px;
-        cursor: pointer;
-    }
-    img {
         cursor: pointer;
     }
 

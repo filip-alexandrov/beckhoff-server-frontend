@@ -60,8 +60,6 @@ time, mark, audio, video, button, input,  hr, a {
 body {
     color: white;
     font-family: 'Outfit', sans-serif;
-
-
 }
 
 /* Dont display plotly logo & take screenshot */

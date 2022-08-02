@@ -3,13 +3,15 @@
     import { onDestroy, onMount } from 'svelte'
     import chartSettingsSvg from '../assets/chartSettings.svg'
     import { createEventDispatcher } from 'svelte'
+    import onOffSvg from '../assets/on-off.svg'
 
     const dispatch = createEventDispatcher()
 
     export let gaugeId: string = 'gauge'
-    export let selectedSensor = 'OFF'
+    export let selectedSensor = 'Temperature #1'
     export let minGaugeValue = 0
     export let maxGaugeValue = 400
+    export let turnedOn = false
 
     let data = [
         {
@@ -69,8 +71,8 @@
         Plotly.newPlot(gaugeId, data, layout)
 
         interval = setInterval(() => {
-            if(selectedSensor == "OFF"){
-                return; 
+            if (!turnedOn) {
+                return
             }
 
             Plotly.update(
@@ -96,7 +98,9 @@
     <div class="gauge" id={gaugeId}>
         <div class="overlay">
             <div class="sensor-name">
-                {selectedSensor} <img
+                {selectedSensor}
+
+                <img
                     on:click={handleChartSettings}
                     src={chartSettingsSvg}
                     alt=""
@@ -122,7 +126,7 @@
         left: 60px;
         display: flex;
         flex-direction: column;
-        width: 190px;
+        width: 195px;
         height: fit-content;
     }
     .sensor-name {
@@ -140,5 +144,6 @@
     }
     img {
         cursor: pointer;
+        margin-left: 10px;
     }
 </style>
