@@ -2,6 +2,7 @@
     import ApexCharts from 'apexcharts'
     import { onMount } from 'svelte'
 import GaugesList from './GaugesList.svelte'
+    import RTChartNew from './RTChartNew.svelte'
     import RTChart from './RTChart.svelte'
 
     import RTTabs from './RTTabs.svelte'
@@ -10,9 +11,9 @@ import GaugesList from './GaugesList.svelte'
 <div class="main">
     <div class="charts">
         <div class="chart"><RTChart chartId="chart-1" /></div>
-        <div class="chart"><!-- <RTChart chartId= "chart-2" /> --></div>
-        <div class="chart"><!-- <RTChart chartId= "chart-3" /> --></div>
-        <div class="chart"><!-- <RTChart chartId= "chart-4" /> --></div>
+        <div class="chart"><RTChart chartId= "chart-2" /></div>
+        <div class="chart"><RTChart chartId= "chart-3" /></div>
+        <div class="chart"><RTChart chartId= "chart-4" /></div>
         <div class="gauges"><GaugesList/></div>
         <!-- <div class="gauges">gauges</div> -->
     </div>

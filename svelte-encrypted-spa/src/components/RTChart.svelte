@@ -30,7 +30,7 @@
             width: '100%',
             type: 'line',
             animations: {
-                enabled: true,
+                enabled: false,
                 easing: 'linear',
                 dynamicAnimation: {
                     speed: 750,
@@ -47,7 +47,7 @@
             enabled: false,
         },
         stroke: {
-            curve: 'smooth',
+            /* curve: 'smooth', */
         },
         markers: {
             size: 0,
@@ -116,7 +116,7 @@
                     fontFamily: 'Outfit, Arial, sans-serif',
                     fontWeight: 400,
                 },
-                datetimeUTC: false
+                datetimeUTC: false,
             },
             title: {
                 text: 'Time',
@@ -132,9 +132,9 @@
             tooltip: {
                 enabled: true,
                 formatter: function (val, opts) {
-                    let date = new Date(val); 
+                    let date = new Date(val)
                     let formatted = date.toTimeString().split(' ')[0]
-                    return `${formatted}`;
+                    return `${formatted}`
                 },
                 offsetY: 7,
                 style: {
@@ -168,13 +168,10 @@
         },
     }
 
-    let chart; 
-    let interval:  any; 
+    let chart
+    let interval: any
     onMount(() => {
-        chart = new ApexCharts(
-            document.querySelector('#' + chartId),
-            options,
-        )
+        chart = new ApexCharts(document.querySelector('#' + chartId), options)
 
         chart.render()
 
@@ -218,7 +215,7 @@
     }
 
     let activeSensor = 'Temperature #1'
-    let units = "Temperature (°C)"
+    let units = 'Temperature (°C)'
     function handleSensorSelection(event) {
         activeSensor = event.detail.sensorName
     }
