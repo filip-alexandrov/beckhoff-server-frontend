@@ -2,6 +2,7 @@
     import ApexCharts from 'apexcharts'
     import { onDestroy, onMount } from 'svelte'
     import RTTabs from './RTTabs.svelte'
+    import { fullSensorData } from '../store/sensors'
 
     // array series
     let dataX = []
@@ -53,7 +54,6 @@
             size: 0,
         },
         yaxis: {
-            max: 100,
             axisBorder: {
                 show: true,
                 color: '#fff',
@@ -142,7 +142,7 @@
                     fontFamily: 'Outfit, Arial, sans-serif',
                 },
             },
-            range: 10000, // in milliseconds
+            range: 30000, // in milliseconds
         },
         legend: {
             show: false,
@@ -176,28 +176,18 @@
         chart.render()
 
         interval = setInterval(function () {
-            let toAppend = 0
-            if (activeSensor in temperature && !isPaused) {
-                toAppend =
-                    temperature[activeSensor][
-                        temperature[activeSensor].length - 1
-                    ]
-            } else if (activeSensor in baumer && !isPaused) {
-                toAppend = baumer[activeSensor][baumer[activeSensor].length - 1]
-            } else if (activeSensor in hbm && !isPaused) {
-                toAppend = hbm[activeSensor][hbm[activeSensor].length - 1]
-            } else if (activeSensor in idl && !isPaused) {
-                toAppend = idl[activeSensor][idl[activeSensor].length - 1]
-            }
-
             if (isPaused) {
                 return
             }
 
+            let toAppend = $fullSensorData[activeSensor]
+
+            console.log('updating chart')
+
             dataX.push(Date.now())
             chart.appendData([
                 {
-                    data: [toAppend],
+                    data: [[toAppend]],
                 },
             ])
         }, 750)
@@ -218,6 +208,45 @@
     let units = 'Temperature (°C)'
     function handleSensorSelection(event) {
         activeSensor = event.detail.sensorName
+
+        updateChart()
+    }
+
+    function updateChart() {
+        clearInterval(interval)
+
+        chart.updateSeries([
+            {
+                data: [
+                    {
+                        x: Date.now(),
+                        y: $fullSensorData[activeSensor],
+                    },
+                ],
+            },
+        ])
+
+        interval = setInterval(function () {
+            if (isPaused) {
+                return
+            }
+
+            let toAppend = $fullSensorData[activeSensor]
+
+            console.log('updating chart')
+
+            dataX.push(Date.now())
+            chart.appendData([
+                {
+                    data: [
+                        {
+                            x: Date.now(),
+                            y: $fullSensorData[activeSensor],
+                        },
+                    ],
+                },
+            ])
+        }, 750)
     }
 
     export let chartId: string

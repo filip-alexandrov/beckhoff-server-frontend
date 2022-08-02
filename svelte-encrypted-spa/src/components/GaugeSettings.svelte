@@ -1,11 +1,10 @@
 <script lang="ts">
-    import { temperature, baumer, hbm, idl } from '../store/sensors'
+    import { fullSensorData } from '../store/sensors'
     import GaugeChart from './GaugeChart.svelte'
-    import chartSettingsSvg from '../assets/chartSettings.svg'
     import gaugeCloseSvg from "../assets/checkmark.svg"
     import onOffSvg from '../assets/on-off.svg'
 
-    let sensorData = { ...$temperature, ...$baumer, ...$hbm, ...$idl }
+    let sensorData = $fullSensorData
 
     let showSettings = false
     function handleChartSettings() {

@@ -52,7 +52,7 @@
     export let dropdownLeftMargin: string = '15px'
 
     // Default (starting) value of the tab
-    let selectedSensor = Object.entries(sensorData)[0][0]
+    let selectedSensor = sensorData[0]
 
     // Dropdown not expanded by default
     let isExpanded = false
@@ -71,7 +71,7 @@
 
 {#if isExpanded}
     <div transition:slide class="dropdown" style="margin-left: {dropdownLeftMargin};">
-        {#each Object.entries(sensorData) as [sensorName, sensorValue]}
+        {#each sensorData as sensorName}
             <div
                 on:click={() => {
                     handleSensorSelection(sensorName)

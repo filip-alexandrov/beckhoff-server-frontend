@@ -4,7 +4,7 @@
     import NavTemp from '../components/NavTemp.svelte'
     import NavWeight from '../components/NavWeight.svelte'
     import NavDistance from '../components/NavDistance.svelte'
-    import NavOrientation from '../components/NavOrientation.svelte'
+    import NavOrientation from './NavOther.svelte'
 </script>
 
 <div class="full-screen">

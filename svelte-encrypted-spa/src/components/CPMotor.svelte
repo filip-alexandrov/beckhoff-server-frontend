@@ -96,10 +96,10 @@
     </div>
 
     <div class="motor-input">
-        <div class="subtitle">Change position</div>
+        <div class="subtitle">Desired position</div>
         <div class="position"><input type="number" />mm</div>
 
-        <div class="subtitle">Change position</div>
+        <div class="subtitle">Velocity</div>
         <div class="speed"><input type="number" />mm/s</div>
 
         <button><img src={onOffSvg} alt="" /> START</button>

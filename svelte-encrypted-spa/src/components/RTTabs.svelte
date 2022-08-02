@@ -10,7 +10,7 @@
     import dropdownSvg from '../assets/dropdown.svg'
     import { slide } from 'svelte/transition'
     import { clickOutside } from './../helpers/clickOutside.js'
-    import { temperature, baumer, hbm, idl } from '../store/sensors'
+    import { temperatureSensors, weightSensors, distanceSensors, otherSensors } from '../store/sensors'
     import RTTab from './RTTab.svelte'
     import chartSettingsSvg from '../assets/chartSettings.svg'
     import pauseSvg from '../assets/pause.svg'
@@ -52,27 +52,27 @@
         <RTTab
             {highlightedSensor}
             dropdownLeftMargin="30px"
-            sensorData={$temperature}
+            sensorData={temperatureSensors}
             on:sensorSelection={(event) =>
                 handleSensorSelection(event, 'temperature')}
         />
         <RTTab
             {highlightedSensor}
             dropdownLeftMargin="200px"
-            sensorData={$baumer}
+            sensorData={weightSensors}
             on:sensorSelection={(event) =>
                 handleSensorSelection(event, 'baumer')}
         />
         <RTTab
             {highlightedSensor}
             dropdownLeftMargin="340px"
-            sensorData={$hbm}
+            sensorData={distanceSensors}
             on:sensorSelection={(event) => handleSensorSelection(event, 'hbm')}
         />
         <RTTab
             {highlightedSensor}
             dropdownLeftMargin="450px"
-            sensorData={$idl}
+            sensorData={otherSensors}
             on:sensorSelection={(event) => handleSensorSelection(event, 'idl')}
         />
     </div>

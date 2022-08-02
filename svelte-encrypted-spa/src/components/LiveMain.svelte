@@ -11,9 +11,9 @@ import GaugesList from './GaugesList.svelte'
 <div class="main">
     <div class="charts">
         <div class="chart"><RTChart chartId="chart-1" /></div>
-        <div class="chart"><RTChart chartId= "chart-2" /></div>
-        <div class="chart"><RTChart chartId= "chart-3" /></div>
-        <div class="chart"><RTChart chartId= "chart-4" /></div>
+        <div class="chart"><!-- <RTChart chartId= "chart-2" /> --></div>
+        <div class="chart"><!-- <RTChart chartId= "chart-3" /> --></div>
+        <div class="chart"><!-- <RTChart chartId= "chart-4" /> --></div>
         <div class="gauges"><GaugesList/></div>
         <!-- <div class="gauges">gauges</div> -->
     </div>
