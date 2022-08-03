@@ -1,162 +1,30 @@
 const ads = require("ads-client");
 
-function logData({ obj }) {
-  for (let key in obj) {
-    console.log(`${key}: ${obj[key]}`);
-  }
-}
-
-async function writeStartTest(client) {
-  console.log("\nWriting values (Starting test)...\n");
-
-  await Promise.all([
-    client.writeSymbol("GVL_InputHMI.e_OperationMode", "A2"),
-    client.writeSymbol("GVL_InputHMI.rMinCurrent", 1.0),
-    client.writeSymbol("GVL_InputHMI.rMaxCurrent", 90.21),
-    client.writeSymbol("GVL_InputHMI.rCurrentStep", 0.1),
-    client.writeSymbol("GVL_InputHMI.rMinAirgap", 0.5),
-    client.writeSymbol("GVL_InputHMI.rMaxAirgap", 43.21),
-    client.writeSymbol("GVL_InputHMI.rAirgapStep", 43.21),
-    client.writeSymbol("GVL_InputHMI.bStartButton", true),
-    client.writeSymbol("GVL_InputHMI.bEmergencyStop", false),
-    client.writeSymbol("GVL_InputHMI.sCSVName", "test_48023984"),
-    client.writeSymbol("GVL_InputHMI.tWaitBeforeMeasurement", 300),
-    client.writeSymbol("GVL_InputHMI.bPause", false),
-
-    client.writeSymbol("GVL_InputHMI.bManualMoveMotor", false),
-    client.writeSymbol("GVL_InputHMI.rManualMotorPosition", 0),
-    client.writeSymbol("GVL_InputHMI.rManualMotorVelocity", 0),
-  ])
-    .then(
-      ([
-        e_OperationMode,
-        rMinCurrent,
-        rMaxCurrent,
-        rCurrentStep,
-        rMinAirgap,
-        rMaxAirgap,
-        rAirgapStep,
-        bStartButton,
-        bEmergencyStop,
-        sCSVName,
-        tWaitBeforeMeasurement,
-        bPause,
-
-        bManualMoveMotor,
-        rManualMotorPosition,
-        rManualMotorVelocity,
-      ]) => {
-        console.log("e_OperationMode: ", e_OperationMode.value);
-        console.log("rMinCurrent: ", rMinCurrent.value);
-        console.log("rMaxCurrent: ", rMaxCurrent.value);
-        console.log("rCurrentStep: ", rCurrentStep.value);
-        console.log("rMinAirgap: ", rMinAirgap.value);
-        console.log("rAirgapStep: ", rAirgapStep.value);
-        console.log("rMaxAirgap: ", rMaxAirgap.value);
-        console.log("bStartButton: ", bStartButton.value);
-        console.log("bEmergencyStop: ", bEmergencyStop.value);
-        console.log("sCSVName: ", sCSVName.value);
-        console.log("tWaitBeforeMeasurement: ", tWaitBeforeMeasurement.value);
-        console.log("bPause: ", bPause.value);
-
-        console.log("bManualMoveMotor: ", bManualMoveMotor.value);
-        console.log("rManualMotorPosition: ", rManualMotorPosition.value);
-        console.log("rManualMotorVelocity: ", rManualMotorVelocity.value);
-      }
-    )
-    .catch((err) => {
-      console.log(err);
-    });
-}
-
-async function readAllValues(client) {
-  console.log("Reading all values...\n");
-
-  await Promise.all([
-    client.readSymbol("GVL_OutputHMI.rCurrentLive"),
-    client.readSymbol("GVL_OutputHMI.rVoltageLive"),
-    client.readSymbol("GVL_OutputHMI.ST_SensorOutputs"),
-    client.readSymbol("GVL_OutputHMI.rMotorPosition"),
-    client.readSymbol("GVL_OutputHMI.rMotorVelocity"),
-    client.readSymbol("GVL_OutputHMI.rMotorTorque"),
-    client.readSymbol("GVL_OutputHMI.bMotorFault"),
-    client.readSymbol("GVL_OutputHMI.uiStatus"),
-    client.readSymbol("GVL_OutputHMI.sWarning"),
-    client.readSymbol("GVL_OutputHMI.tElapsedTime"),
-    client.readSymbol("GVL_OutputHMI.uiMeasurementsFinished"),
-    client.readSymbol("GVL_OutputHMI.uiOverallMeasurements"),
-
-    client.readSymbol("GVL_InputHMI.e_OperationMode"),
-    client.readSymbol("GVL_InputHMI.rMinCurrent"),
-    client.readSymbol("GVL_InputHMI.rMaxCurrent"),
-    client.readSymbol("GVL_InputHMI.rCurrentStep"),
-    client.readSymbol("GVL_InputHMI.rMinAirgap"),
-    client.readSymbol("GVL_InputHMI.rMaxAirgap"),
-    client.readSymbol("GVL_InputHMI.rAirgapStep"),
-    client.readSymbol("GVL_InputHMI.bStartButton"),
-    client.readSymbol("GVL_InputHMI.bEmergencyStop"),
-    client.readSymbol("GVL_InputHMI.sCSVName"),
-    client.readSymbol("GVL_InputHMI.tWaitBeforeMeasurement"),
-    client.readSymbol("GVL_InputHMI.bPause"),
-
-    client.readSymbol("GVL_InputHMI.bManualMoveMotor"),
-    client.readSymbol("GVL_InputHMI.rManualMotorPosition"),
-    client.readSymbol("GVL_InputHMI.rManualMotorVelocity"),
-  ])
-    .then((response) => {
-      let readObj = {};
-
-      for (let element of response) {
-        readObj[`${element.symbol.name}`] = element.value;
-      }
-
-      return readObj;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}
-
-const client = new ads.Client({
-  targetAmsNetId: "169.254.113.74.1.1",
-  targetAdsPort: 851,
-});
-
-/* const plc = client
-  .connect()
-  .then(async (res) => {
-    console.log(`Connected to the ${res.targetAmsNetId}`);
-    console.log(
-      `Router assigned us AmsNetId ${res.localAmsNetId} and port ${res.localAdsPort}`
-    );
-
-    await readAllValues(client);
-
-    console.log("Disconnecting...");
-    return client.disconnect();
-  })
-
-  .catch((err) => {
-    console.log("Something failed:", err);
-  }); */
-
-let plcManager = {
+// Single object with preconfigured in client twincat connection data
+export let plcManager = {
   client: new ads.Client({
     targetAmsNetId: "169.254.113.74.1.1",
     targetAdsPort: 851,
   }),
 
-  openConnection: undefined, // read and write pipeline to client
-
+  // Connects to Twincat system and logs 
   async connectToPlc() {
-    this.openConnection = await this.client.connect();
+    let openConnection = await this.client.connect();
 
-    console.log(`Connected to the ${this.openConnection.targetAmsNetId}`);
+    console.log(`Connected to the ${openConnection.targetAmsNetId}`);
     console.log(
-      `Router assigned us AmsNetId ${this.openConnection.localAmsNetId} and port ${this.openConnection.localAdsPort}`
+      `Router assigned us AmsNetId ${openConnection.localAmsNetId} and port ${openConnection.localAdsPort}`
     );
   },
 
+  // Disconnects from Twincat system
+  async disconnectPlc() {
+    console.log("Disconnecting...");
+
+    await this.client.disconnect();
+  },
+
+  // Will read all input and output values from Twincat
   async readAllValues() {
     console.log("Reading all values...\n");
     let readObj = {};
@@ -201,14 +69,114 @@ let plcManager = {
         throw err;
       });
 
-      return readObj;
+    return readObj;
+  },
+
+  // Will write all input vars needed to start/stop a test
+  async writeStartTest(
+    e_OperationMode,
+    rMinCurrent,
+    rMaxCurrent,
+    rCurrentStep,
+    rMinAirgap,
+    rMaxAirgap,
+    rAirgapStep,
+    bStartButton,
+    bEmergencyStop,
+    sCSVName,
+    tWaitBeforeMeasurement,
+    bPause
+  ) {
+    console.log("Writing values (Starting test)...\n");
+    let readObj = {};
+
+    await Promise.all([
+      this.client.writeSymbol("GVL_InputHMI.e_OperationMode", e_OperationMode),
+      this.client.writeSymbol("GVL_InputHMI.rMinCurrent", rMinCurrent),
+      this.client.writeSymbol("GVL_InputHMI.rMaxCurrent", rMaxCurrent),
+      this.client.writeSymbol("GVL_InputHMI.rCurrentStep", rCurrentStep),
+      this.client.writeSymbol("GVL_InputHMI.rMinAirgap", rMinAirgap),
+      this.client.writeSymbol("GVL_InputHMI.rMaxAirgap", rMaxAirgap),
+      this.client.writeSymbol("GVL_InputHMI.rAirgapStep", rAirgapStep),
+      this.client.writeSymbol("GVL_InputHMI.bStartButton", bStartButton),
+      this.client.writeSymbol("GVL_InputHMI.bEmergencyStop", bEmergencyStop),
+      this.client.writeSymbol("GVL_InputHMI.sCSVName", sCSVName),
+      this.client.writeSymbol(
+        "GVL_InputHMI.tWaitBeforeMeasurement",
+        tWaitBeforeMeasurement
+      ),
+      this.client.writeSymbol("GVL_InputHMI.bPause", bPause),
+    ])
+      .then((response) => {
+        for (let element of response) {
+          readObj[`${element.symbol.name}`] = element.value;
+        }
+      })
+      .catch((err) => {
+        throw err;
+      });
+
+    return readObj;
+  },
+
+  // will write all inputs needed to manually control the motor
+  async writeManualMotor(
+    bManualMoveMotor,
+    rManualMotorPosition,
+    rManualMotorVelocity
+  ) {
+    console.log("Writing values (Manual Motor)...\n");
+
+    let readObj = {};
+
+    await Promise.all([
+      this.client.writeSymbol(
+        "GVL_InputHMI.bManualMoveMotor",
+        bManualMoveMotor
+      ),
+      this.client.writeSymbol(
+        "GVL_InputHMI.rManualMotorPosition",
+        rManualMotorPosition
+      ),
+      this.client.writeSymbol(
+        "GVL_InputHMI.rManualMotorVelocity",
+        rManualMotorVelocity
+      ),
+    ])
+      .then((response) => {
+        for (let element of response) {
+          readObj[`${element.symbol.name}`] = element.value;
+        }
+      })
+      .catch((err) => {
+        throw err;
+      });
+
+    return readObj;
   },
 };
 
 async function main() {
   await plcManager.connectToPlc();
 
-  let resp = await plcManager.readAllValues();
+  await plcManager.readAllValues();
+  await plcManager.writeStartTest(
+    "A1",
+    1.0,
+    90.21,
+    0.1,
+    0.5,
+    43.21,
+    23.21,
+    true,
+    false,
+    "test_49238",
+    300,
+    false
+  );
+  let resp = await plcManager.writeManualMotor(false, 0, 0);
+  await plcManager.disconnectPlc();
+
   console.log(resp);
 }
 
