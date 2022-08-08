@@ -27,3 +27,31 @@
 
 **Method 2: Incremental static regeneration** 
 - [NextJS with its on-demand ISR](https://nextjs.org/docs/basic-features/data-fetching/incremental-static-regeneration) with invalidation API will be used. A way to verify if HTML page was cached by CDN is needed. The project will be deployed to Vercel 
+
+
+
+CSRF and XSS protection should be implemented. To prevent XSS I'm storing JWT in HTTP-Only, HSTS cookie. The token will be used to verify user serverside. This alone prevents XSS and MITM attacks, but exposes clients to CSRF. A Session random string will be stored in browser's Local Storage and sent by JavaScript manually upon each request to the API. If information requires auth to be viewed, storing it on API and thus hindering Googlebot and clients not running JS from viewing it is not an issue.
+
+
+Following strategies can be used depending on frontend: 
+- When using templating (ie. Handlebars, EJS): Store the CSRF Token as meta tag on rendering, so it's accessible with JavaScript
+- Use Browser's LocalStorage, so there won't be a need to LogIn every time one closes the tab
+- On new browsers, use JWT as cookie with SameSite Strict
+
+Packages to be used: 
+- [JWT generation and verification](https://www.npmjs.com/package/express-jwt)
+- [Sanitize text inputs](https://www.npmjs.com/package/xss)
+- [Prevent CSRF](https://www.npmjs.com/package/csurf)
+
+On this project, CSRF is more important to protect against. If attacker finds XSS exploit and steals the CSRF token, it will only need to redirect a user to volunerable site to initiate successful API attack, since JWT cookie will be sent automatically. Only SameSite Strict Cookie Policy protects adequately.
+
+95.3% of global browser users support SameSite policy, which is similar to webp image standards. Considering drastically improved security, this is enough.
+
+DDOS Protection 
+
+When protecting against DDOS above 50% server load, countermeasures should be scaled with demand. 
+
+Packages to be used: 
+- [Rate limit IP addresses after 80% server load](https://www.npmjs.com/package/express-rate-limit)
+- [Computatinally expensive captcha with gradual complexity increase](https://mcaptcha.org/s)
+- [Cloudflare reverse proxy](https://www.digitalocean.com/community/tutorials/how-to-mitigate-ddos-attacks-against-your-website-with-cloudflare)
