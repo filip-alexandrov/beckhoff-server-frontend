@@ -25,6 +25,8 @@ let plcManager = {
   database: [],
 
   async loadDatabase() {
+    logger("twincat", "loadDatabase", "info", "Loading database");
+
     let data = fs.readFileSync("./database.json");
     this.database = JSON.parse(data);
   },
@@ -35,13 +37,17 @@ let plcManager = {
 
     await this.client
       .connect()
-      .then((res) => {
+      .then(async (res) => {
         logger(
           "twincat",
           "connectToPlc",
           "info",
           `Connected to the ${res.targetAmsNetId} Router assigned us AmsNetId ${res.localAmsNetId} and port ${res.localAdsPort}`
         );
+
+        // init databases and start querying runtime values
+        await this.loadDatabase(); 
+        this.startWritingToDatabase(); 
 
         console.log(`Connected to the ${res.targetAmsNetId} Router assigned us AmsNetId ${res.localAmsNetId} and port ${res.localAdsPort}`)
 
@@ -65,12 +71,12 @@ let plcManager = {
     await this.client
       .disconnect()
       .then(() => {
-        console.log("Disconnected");
+        logger("twincat", "disconnectPlc", "info", "Disconnected from Twincat");
 
         readObj.success = true;
       })
       .catch((err) => {
-        console.log(err);
+        logger("twincat", "disconnectPlc", "error", err);
 
         readObj.success = false;
         readObj.errorMessage = err;
@@ -90,12 +96,14 @@ let plcManager = {
       this.client.readDeviceInfo(),
     ])
       .then(([plcRuntimeState, deviceInfo]) => {
+        logger("twincat", "getPlcStatus", "info", "PLC Status is 'up'");
         readObj.success = true;
 
         readObj.plcRuntimeState = plcRuntimeState;
         readObj.deviceInfo = deviceInfo;
       })
       .catch((err) => {
+        logger("twincat", "getPlcStatus", "error", err);
         console.log(err);
 
         readObj.success = false;
@@ -354,12 +362,13 @@ async function main() {
 
   await plcManager.loadDatabase();
   await plcManager.connectToPlc();
-  let resp = await plcManager.getPlcStatus();
+  await plcManager.getPlcStatus();
+  let resp = await plcManager.readAllValues(); 
   plcManager.startWritingToDatabase();
 
   console.log(JSON.stringify(resp))
 }
 
-main(); //  causes run in the same port
+// main(); //  causes run in the same port
 
 module.exports = { plcManager };

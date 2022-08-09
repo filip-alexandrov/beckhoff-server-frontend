@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const port: number = 80;
+const port: number = 6328;
 
 // serve assets, images, css, fonts, etc.
 app.use(
@@ -28,40 +28,61 @@ app.get("/", (req: Request, res: Response) =>
 );
 
 // api endpoint for connecting to system
-app.post("/api/connect", (req: Request, res: Response) => {
-  plcManager.connectToPlc();
+app.post("/api/connectToPlc", async (req: Request, res: Response) => {
+  let tcResp = await plcManager.connectToPlc();
 
-  req.socket.end();
+  res.json(tcResp);
 });
 
 // api endpoint for disconnecting from system
-app.post("/api/disconnect", (req: Request, res: Response) => {
-  console.log(req.body);
+app.post("/api/disconnectPlc", async (req: Request, res: Response) => {
+  let tcResp = await plcManager.disconnectPlc();
 
-  req.socket.end();
+  res.json(tcResp);
 });
 
 // api endpoint for getting status of plc
-app.get("/api/status", (req: Request, res: Response) => {
-  console.log(req.body);
+app.get("/api/getPlcStatus", async (req: Request, res: Response) => {
+  let tcResp = await plcManager.getPlcStatus();
 
-  req.socket.end();
+  res.json(tcResp);
 });
 
 // api endpoint for reading all inputs/outputs
-app.get("/api/read", (req: Request, res: Response) => {
-  req.socket.end();
+app.get("/api/readAll", async (req: Request, res: Response) => {
+  let tcResp = await plcManager.readAllValues();
+
+  res.json(tcResp);
 });
 
 // api endpoint for writing to motor only
-app.post("/api/writeMotor", (req: Request, res: Response) => {
-  console.log(req.body);
+app.post("/api/writeManualMotor", async (req: Request, res: Response) => {
+  let { bManualMoveMotor, rManualMotorPosition, rManualMotorVelocity } =
+    req.body;
 
-  req.socket.end();
+  let tcResp = await plcManager.writeManualMotor(
+    bManualMoveMotor,
+    rManualMotorPosition,
+    rManualMotorVelocity
+  );
+
+  res.json(tcResp);
+});
+
+// api endpoint for nullifying distance sensors
+app.post("/api/writeNullifyDistance", async (req: Request, res: Response) => {
+  let { bDistanceSensorNulling } =
+    req.body;
+
+  let tcResp = await plcManager.writeNullifyDistance(
+    bDistanceSensorNulling
+  );
+
+  res.json(tcResp);
 });
 
 // api endpoint to start/stop test
-app.post("/api/writeTest", async (req: Request, res: Response) => {
+app.post("/api/writeStartTest", async (req: Request, res: Response) => {
   let {
     e_OperationMode,
     rMinCurrent,
@@ -77,7 +98,7 @@ app.post("/api/writeTest", async (req: Request, res: Response) => {
     bPause,
   } = req.body;
 
-  let plcResponse = await plcManager.writeStartTest(
+  let tcResp = await plcManager.writeStartTest(
     e_OperationMode,
     rMinCurrent,
     rMaxCurrent,
@@ -92,7 +113,7 @@ app.post("/api/writeTest", async (req: Request, res: Response) => {
     bPause
   );
 
-  res.json(plcResponse);
+  res.json(tcResp);
 });
 
 app.listen(port, () => {

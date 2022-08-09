@@ -97,35 +97,3 @@ setInterval(() => {
         return data
     })
 }, 750)
-
-
-let motorWriteRequest = {
-    desiredPosition: 20, 
-    velocity: 10, 
-}
-
-let newTestRequest = {
-    minAirGap: 10, 
-    maxAirGap: 20,
-    airGapStep : 1,
-    minCurrent : 10, 
-    maxCurrent : 20,
-    currentStep : 1,
-    waitBeforeMeasurement: 2000, 
-    operationMode: "A1", 
-    csvFileName: 'test',
-}
-
-let testInProgressData = {
-    completedSubtests: 10, 
-    totalSubtests: 20,
-    minAirGap: 10, 
-    maxAirGap: 20,
-    airGapStep : 1,
-    minCurrent : 10, 
-    maxCurrent : 20,
-    currentStep : 1,
-    waitBeforeMeasurement: 2000, 
-    operationMode: "A1",
-    csvFileName: 'test',
-}
