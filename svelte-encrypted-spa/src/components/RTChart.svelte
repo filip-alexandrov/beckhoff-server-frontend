@@ -2,14 +2,16 @@
     import ApexCharts from 'apexcharts'
     import { onDestroy, onMount } from 'svelte'
     import RTTabs from './RTTabs.svelte'
-    import { fullSensorData } from '../store/sensors'
+    import { fullSensorData, sensorUnits } from '../store/sensors'
+
+    let activeSensor = 'Temperature #1'
 
     // array series
     let dataX = []
     let dataY = []
 
     dataX.push(Date.now())
-    dataY.push(Math.random() * 100)
+    dataY.push($fullSensorData[activeSensor])
 
     let options = {
         colors: ['#DFE300', '#4576b5'],
@@ -61,7 +63,7 @@
                 offsetX: -5,
             },
             title: {
-                text: 'Force',
+                text: $sensorUnits[activeSensor],
                 offsetX: 8,
                 offsetY: 0,
                 style: {
@@ -182,7 +184,6 @@
 
             let toAppend = $fullSensorData[activeSensor]
 
-            console.log('updating chart')
 
             dataX.push(Date.now())
             chart.appendData([
@@ -204,8 +205,6 @@
         isPaused = event.detail.isPaused
     }
 
-    let activeSensor = 'Temperature #1'
-    let units = 'Temperature (°C)'
     function handleSensorSelection(event) {
         activeSensor = event.detail.sensorName
 
@@ -230,10 +229,6 @@
             if (isPaused) {
                 return
             }
-
-            let toAppend = $fullSensorData[activeSensor]
-
-            console.log('updating chart')
 
             dataX.push(Date.now())
             chart.appendData([

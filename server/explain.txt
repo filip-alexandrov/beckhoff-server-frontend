@@ -1,0 +1,119 @@
+// Will write all input vars needed to start/stop a test
+  async writeStartTest(
+    e_OperationMode,
+    rMinCurrent,
+    rMaxCurrent,
+    rCurrentStep,
+    rMinAirgap,
+    rMaxAirgap,
+    rAirgapStep,
+    bStartButton,
+    bEmergencyStop,
+    sCSVName,
+    tWaitBeforeMeasurement,
+    bPause
+  ) {
+    console.log("Writing values (Starting test)...\n");
+    let readObj = {};
+
+    await Promise.all([
+      this.client.writeSymbol("GVL_InputHMI.e_OperationMode", e_OperationMode),
+      this.client.writeSymbol("GVL_InputHMI.rMinCurrent", rMinCurrent),
+      this.client.writeSymbol("GVL_InputHMI.rMaxCurrent", rMaxCurrent),
+      this.client.writeSymbol("GVL_InputHMI.rCurrentStep", rCurrentStep),
+      this.client.writeSymbol("GVL_InputHMI.rMinAirgap", rMinAirgap),
+      this.client.writeSymbol("GVL_InputHMI.rMaxAirgap", rMaxAirgap),
+      this.client.writeSymbol("GVL_InputHMI.rAirgapStep", rAirgapStep),
+      this.client.writeSymbol("GVL_InputHMI.bStartButton", bStartButton),
+      this.client.writeSymbol("GVL_InputHMI.bEmergencyStop", bEmergencyStop),
+      this.client.writeSymbol("GVL_InputHMI.sCSVName", sCSVName),
+      this.client.writeSymbol(
+        "GVL_InputHMI.tWaitBeforeMeasurement",
+        tWaitBeforeMeasurement
+      ),
+      this.client.writeSymbol("GVL_InputHMI.bPause", bPause),
+    ])
+      .then((response) => {
+        readObj.success = true;
+
+        for (let element of response) {
+          readObj[`${element.symbol.name}`] = element.value;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+
+        readObj.success = false;
+        readObj.errorMessage = err;
+      });
+
+    return readObj;
+  },
+
+  // will write all inputs needed to manually control the motor
+  async writeManualMotor(
+    bManualMoveMotor,
+    rManualMotorPosition,
+    rManualMotorVelocity
+  ) {
+    console.log("Writing values (Manual Motor)...\n");
+
+    let readObj = {};
+
+    await Promise.all([
+      this.client.writeSymbol(
+        "GVL_InputHMI.bManualMoveMotor",
+        bManualMoveMotor
+      ),
+      this.client.writeSymbol(
+        "GVL_InputHMI.rManualMotorPosition",
+        rManualMotorPosition
+      ),
+      this.client.writeSymbol(
+        "GVL_InputHMI.rManualMotorVelocity",
+        rManualMotorVelocity
+      ),
+    ])
+      .then((response) => {
+        readObj.success = true;
+
+        for (let element of response) {
+          readObj[`${element.symbol.name}`] = element.value;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+
+        readObj.success = false;
+        readObj.errorMessage = err;
+      });
+
+    return readObj;
+  },
+
+  // write to nullify sensors
+  async writeNullifyDistance(bDistanceSensorNulling) {
+    console.log("Writing values (Nullify Distance Sensors)...\n");
+
+    let readObj = {};
+
+    await Promise.all([
+      this.client.writeSymbol(
+        "GVL_InputHMI.bDistanceSensorNulling",
+        bDistanceSensorNulling
+      ),
+    ])
+      .then((response) => {
+        for (let element of response) {
+          readObj[`${element.symbol.name}`] = element.value;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+
+        readObj.success = false;
+        readObj.errorMessage = err;
+      });
+
+    return readObj;
+  },

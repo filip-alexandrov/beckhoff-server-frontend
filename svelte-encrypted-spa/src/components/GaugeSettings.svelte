@@ -42,6 +42,7 @@
             <div class="sensor-name">
                 Settings <span>
                     <img
+                    class:power-off={!turnedOn}
                     on:click={handlePowerButton}
                     src={onOffSvg}
                     alt=""
@@ -167,6 +168,9 @@
     }
     .user-input {
         margin-left: 10px;
+    }
+    .power-off{
+        transform: rotate(180deg);
     }
 
 

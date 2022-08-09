@@ -12,11 +12,11 @@ export const temperatureSensors = [
     'Virtual Temperature',
 ]
 export const weightSensors = [
-    'Baumer #1',
-    'Baumer #2',
-    'Baumer #3',
-    'Baumer #4',
-    'HBM #1',
+    'Small Force #1',
+    'Small Force #2',
+    'Small Force #3',
+    'Small Force #4',
+    'Big Force',
 ]
 
 export const distanceSensors = [
@@ -33,6 +33,36 @@ export const otherSensors = [
     'Motor Velocity',
     'Motor Position',
 ]
+
+export const sensorUnits = writable({
+    'Temperature #1': "°C",
+    'Temperature #2': "°C",
+    'Temperature #3': "°C",
+    'Temperature #4': "°C",
+    'Temperature #5': "°C",
+    'Temperature #6': "°C",
+    'Temperature #7': "°C",
+    'Temperature #8': "°C",
+    'Virtual Temperature': "°C",
+
+    'Baumer #1': "N",
+    'Baumer #2': "N",
+    'Baumer #3': "N",
+    'Baumer #4': "N",
+    'HBM #1': "N",
+
+    'IDL #1': "mm",
+    'IDL #2': "mm",
+    'IDL #3': "mm",
+    'IDL #4': "mm",
+    'IDL #5': "mm",
+    'IDL #6': "mm",
+
+    Current: "A",
+    Voltage: "V",
+    'Motor Velocity': "mm/s",
+    'Motor Position': "mm",
+})
 
 export const fullSensorData = writable({
     'Temperature #1': 0,
@@ -64,36 +94,38 @@ export const fullSensorData = writable({
     'Motor Position': 0,
 })
 
-setInterval(() => {
+export async function continousSensorUpdate(allValues) {
     fullSensorData.update((data) => {
-        data['Temperature #1'] = Math.random() * 20 + 80
-        data['Temperature #2'] = Math.random() * 20 + 80
-        data['Temperature #3'] = Math.random() * 20 + 80
-        data['Temperature #4'] = Math.random() * 20 + 80
-        data['Temperature #5'] = Math.random() * 20 + 80
-        data['Temperature #6'] = Math.random() * 20 + 80
-        data['Temperature #7'] = Math.random() * 20 + 80
-        data['Temperature #8'] = Math.random() * 20 + 80
-        data['Virtual Temperature'] = Math.random() * 20 + 80
+        data['Temperature #1'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][0]
+        data['Temperature #2'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][1]
+        data['Temperature #3'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][2]
+        data['Temperature #4'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][3]
+        data['Temperature #5'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][4]
+        data['Temperature #6'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][5]
+        data['Temperature #7'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][6]
+        data['Temperature #8'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][7]
+        data['Virtual Temperature'] = 0
 
-        data['Baumer #1'] = Math.random() * 20 + 60
-        data['Baumer #2'] = Math.random() * 20 + 60
-        data['Baumer #3'] = Math.random() * 20 + 60
-        data['Baumer #4'] = Math.random() * 20 + 60
-        data['HBM #1'] = Math.random() * 20 + 60
+        data['Small Force #1'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rSmallForceLive"][0]
+        data['Small Force #2'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rSmallForceLive"][1]
+        data['Small Force #3'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rSmallForceLive"][2]
+        data['Small Force #4'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rSmallForceLive"][3]
+        data['Small Force #4'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rSmallForceLive"][3]
+        data['Big Force'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rBigForceLive"]
 
-        data['IDL #1'] = Math.random() * 20 + 40
-        data['IDL #2'] = Math.random() * 20 + 40
-        data['IDL #3'] = Math.random() * 20 + 40
-        data['IDL #4'] = Math.random() * 20 + 40
-        data['IDL #5'] = Math.random() * 20 + 40
-        data['IDL #6'] = Math.random() * 20 + 40
+        data['IDL #1'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rDistanceLive"][0]
+        data['IDL #2'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rDistanceLive"][1]
+        data['IDL #3'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rDistanceLive"][2]
+        data['IDL #4'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rDistanceLive"][3]
+        data['IDL #5'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rDistanceLive"][4]
+        data['IDL #6'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rDistanceLive"][5]
 
-        data['Current'] = Math.random() * 20 + 0
-        data['Voltage'] = Math.random() * 20 + 0
-        data['Motor Velocity'] = Math.random() * 20 + 0
-        data['Motor Position'] = Math.random() * 20 + 0
+        data['Current'] = allValues["GVL_OutputHMI.rCurrentLive"]
+        data['Voltage'] = allValues["GVL_OutputHMI.rVoltageLive"]
+
+        data['Motor Velocity'] = allValues["GVL_OutputHMI.rMotorVelocity"]
+        data['Motor Position'] = allValues["GVL_OutputHMI.rMotorPosition"]
 
         return data
     })
-}, 750)
+}

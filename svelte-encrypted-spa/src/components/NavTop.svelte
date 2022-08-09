@@ -7,9 +7,16 @@
     import controlPanel from '../assets/controlPanel.svg'
     import live from '../assets/live.svg'
 
+    import connectionFailure from '../assets/connection-failure.svg'
+    import connectionSuccess from '../assets/connection-success.svg'
+    import {
+        plcConnectionStatus
+    } from '../store/apiStatusCom'
+    import {connectToPlc, disconnectPlc} from '../store/requests'
+
     import { Modals, closeModal, openModal, modals } from 'svelte-modals'
     import { fade } from 'svelte/transition'
-    import {circInOut, linear} from 'svelte/easing'
+    import { circInOut, linear } from 'svelte/easing'
 
     import Modal from './Modal.svelte'
     import { fly } from 'svelte/transition'
@@ -17,13 +24,6 @@
     import { createEventDispatcher } from 'svelte/internal'
     import { goto } from 'svelte-pathfinder'
     import Motor from './ControlPanel.svelte'
-    const dispatch = createEventDispatcher()
-
-    function handleSettingsClick() {
-        openModal(Modal, {
-            title: 'Alert modal is opened',
-        })
-    }
 
     function handleTabClick(clickedTab) {
         selected = clickedTab
@@ -75,32 +75,27 @@
         >
     </div>
     <div class="center">
-        <button> <img src={start} alt="" /> Start</button>
-        <button on:click={handleSettingsClick}
-            ><img src={settings} alt="" /> Settings</button
-        >
+        {#if $plcConnectionStatus.success == false}
+            <button on:click={connectToPlc}> <img src={connectionFailure} alt="" /> Connect to PLC</button>
+        {:else if $plcConnectionStatus.success == true}
+            <button on:click={disconnectPlc}> <img src={connectionSuccess} alt="" /> Disconnect from PLC</button>
+        {/if}
     </div>
     <div class="right">
-        <button class:selected={displayMotorControl} on:click={handleDisplayMotorControl}
+        <button
+            class:selected={displayMotorControl}
+            on:click={handleDisplayMotorControl}
             ><img src={controlPanel} alt="" /> Contol panel</button
         >
     </div>
 </div>
 
 {#if displayMotorControl}
-    <div transition:fly={{y: 0, x: 350, easing: linear}}>
+    <div transition:fly={{ y: 0, x: 350, easing: linear }}>
         <Motor />
     </div>
 {/if}
 
-<Modals>
-    <div
-        slot="backdrop"
-        class="backdrop"
-        transition:fade
-        on:click={closeModal}
-    />
-</Modals>
 
 <style>
     .top-nav {
@@ -140,13 +135,5 @@
     }
     .selected:hover {
         background-color: #212121;
-    }
-    .backdrop {
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        left: 0;
-        background: rgba(0, 0, 0, 0.5);
     }
 </style>

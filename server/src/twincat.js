@@ -171,6 +171,7 @@ let plcManager = {
     await Promise.all([
       this.client.readSymbol("GVL_OutputHMI.rCurrentLive"),
       this.client.readSymbol("GVL_OutputHMI.rVoltageLive"),
+      this.client.readSymbol("GVL_OutputHMI.rCurrentLast"),
       this.client.readSymbol("GVL_OutputHMI.ST_SensorOutputs"),
       this.client.readSymbol("GVL_OutputHMI.rMotorPosition"),
       this.client.readSymbol("GVL_OutputHMI.rMotorVelocity"),
@@ -200,6 +201,7 @@ let plcManager = {
       this.client.readSymbol("GVL_InputHMI.rManualMotorVelocity"),
 
       this.client.readSymbol("GVL_InputHMI.bDistanceSensorNulling"),
+      this.client.readSymbol("GVL_InputHMI.bDistanceSensorNullingPlateRemoved"),
     ])
       .then((response) => {
         readObj.success = true;
@@ -218,118 +220,28 @@ let plcManager = {
     return readObj;
   },
 
-  // Will write all input vars needed to start/stop a test
-  async writeStartTest(
-    e_OperationMode,
-    rMinCurrent,
-    rMaxCurrent,
-    rCurrentStep,
-    rMinAirgap,
-    rMaxAirgap,
-    rAirgapStep,
-    bStartButton,
-    bEmergencyStop,
-    sCSVName,
-    tWaitBeforeMeasurement,
-    bPause
+  // write arbitrary prepared object to Runtime
+  async writeToPlc(
+    writeObj
   ) {
-    console.log("Writing values (Starting test)...\n");
-    let readObj = {};
+    console.log("Writing values to PLC... \n");
 
-    await Promise.all([
-      this.client.writeSymbol("GVL_InputHMI.e_OperationMode", e_OperationMode),
-      this.client.writeSymbol("GVL_InputHMI.rMinCurrent", rMinCurrent),
-      this.client.writeSymbol("GVL_InputHMI.rMaxCurrent", rMaxCurrent),
-      this.client.writeSymbol("GVL_InputHMI.rCurrentStep", rCurrentStep),
-      this.client.writeSymbol("GVL_InputHMI.rMinAirgap", rMinAirgap),
-      this.client.writeSymbol("GVL_InputHMI.rMaxAirgap", rMaxAirgap),
-      this.client.writeSymbol("GVL_InputHMI.rAirgapStep", rAirgapStep),
-      this.client.writeSymbol("GVL_InputHMI.bStartButton", bStartButton),
-      this.client.writeSymbol("GVL_InputHMI.bEmergencyStop", bEmergencyStop),
-      this.client.writeSymbol("GVL_InputHMI.sCSVName", sCSVName),
-      this.client.writeSymbol(
-        "GVL_InputHMI.tWaitBeforeMeasurement",
-        tWaitBeforeMeasurement
-      ),
-      this.client.writeSymbol("GVL_InputHMI.bPause", bPause),
-    ])
+    let readObj = {};
+    let promises = [];
+
+    for(let key in writeObj) {
+      promises.push(this.client.writeSymbol(key, writeObj[key]));
+    }
+
+    await Promise.all(promises)
       .then((response) => {
+        logger("twincat", "writeToPlc", "info", "Writting to PLC was successful");
+
         readObj.success = true;
-
-        for (let element of response) {
-          readObj[`${element.symbol.name}`] = element.value;
-        }
       })
       .catch((err) => {
         console.log(err);
-
-        readObj.success = false;
-        readObj.errorMessage = err;
-      });
-
-    return readObj;
-  },
-
-  // will write all inputs needed to manually control the motor
-  async writeManualMotor(
-    bManualMoveMotor,
-    rManualMotorPosition,
-    rManualMotorVelocity
-  ) {
-    console.log("Writing values (Manual Motor)...\n");
-
-    let readObj = {};
-
-    await Promise.all([
-      this.client.writeSymbol(
-        "GVL_InputHMI.bManualMoveMotor",
-        bManualMoveMotor
-      ),
-      this.client.writeSymbol(
-        "GVL_InputHMI.rManualMotorPosition",
-        rManualMotorPosition
-      ),
-      this.client.writeSymbol(
-        "GVL_InputHMI.rManualMotorVelocity",
-        rManualMotorVelocity
-      ),
-    ])
-      .then((response) => {
-        readObj.success = true;
-
-        for (let element of response) {
-          readObj[`${element.symbol.name}`] = element.value;
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-
-        readObj.success = false;
-        readObj.errorMessage = err;
-      });
-
-    return readObj;
-  },
-
-  // write to nullify sensors
-  async writeNullifyDistance(bDistanceSensorNulling) {
-    console.log("Writing values (Nullify Distance Sensors)...\n");
-
-    let readObj = {};
-
-    await Promise.all([
-      this.client.writeSymbol(
-        "GVL_InputHMI.bDistanceSensorNulling",
-        bDistanceSensorNulling
-      ),
-    ])
-      .then((response) => {
-        for (let element of response) {
-          readObj[`${element.symbol.name}`] = element.value;
-        }
-      })
-      .catch((err) => {
-        console.log(err);
+        logger("twincat", "writeToPlc", "error", err);
 
         readObj.success = false;
         readObj.errorMessage = err;

@@ -4,6 +4,7 @@
     import chartSettingsSvg from '../assets/chartSettings.svg'
     import { createEventDispatcher } from 'svelte'
     import onOffSvg from '../assets/on-off.svg'
+    import { sensorUnits, fullSensorData } from '../store/sensors';
 
     const dispatch = createEventDispatcher()
 
@@ -49,7 +50,7 @@
                     color: '#fff',
                     family: 'Outfit',
                 },
-                suffix: ' °C',
+                suffix: $sensorUnits[selectedSensor],
             },
         },
     ]
@@ -78,7 +79,7 @@
             Plotly.update(
                 gaugeId,
                 {
-                    value: Math.random() * 400,
+                    value: $fullSensorData[selectedSensor],
                 },
                 {},
             )

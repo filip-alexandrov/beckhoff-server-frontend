@@ -1,40 +1,90 @@
 <script lang="ts">
     import onOffSvg from '../assets/on-off.svg'
+
+    let newTestObj = {
+        'GVL_InputHMI.e_OperationMode': 'A1',
+        'GVL_InputHMI.bEmergencyStop': false,
+        'GVL_InputHMI.bStartButton': true,
+
+        'GVL_InputHMI.rMinAirgap': null,
+        'GVL_InputHMI.rMaxAirgap': null,
+        'GVL_InputHMI.rAirgapStep': null,
+        'GVL_InputHMI.rMinCurrent': null,
+        'GVL_InputHMI.rMaxCurrent': null,
+        'GVL_InputHMI.rCurrentStep': null,
+        "GVL_InputHMI.tWaitBeforeMeasurement" : null, 
+        'GVL_InputHMI.sCSVName': null,
+    }
 </script>
 
 <div class="part-name">Start new test</div>
 <div class="input-group">
     <div class="input-subfield">
         <div class="subtitle">Min air gap</div>
-        <div class="input-box"><input type="number" />mm</div>
+        <div class="input-box">
+            <input
+                type="number"
+                bind:value={newTestObj['GVL_InputHMI.rMinAirgap']}
+            />mm
+        </div>
     </div>
     <div class="input-subfield">
         <div class="subtitle">Max air gap</div>
-        <div class="input-box"><input type="number" />mm</div>
+        <div class="input-box">
+            <input
+                type="number"
+                bind:value={newTestObj['GVL_InputHMI.rMaxAirgap']}
+            />mm
+        </div>
     </div>
     <div class="input-subfield">
         <div class="subtitle">Air gap step</div>
-        <div class="input-box"><input type="number" />mm</div>
+        <div class="input-box">
+            <input
+                type="number"
+                bind:value={newTestObj['GVL_InputHMI.rAirgapStep']}
+            />mm
+        </div>
     </div>
 </div>
 <div class="input-group">
     <div class="input-subfield">
         <div class="subtitle">Min current</div>
-        <div class="input-box"><input type="number" />A</div>
+        <div class="input-box">
+            <input
+                type="number"
+                bind:value={newTestObj['GVL_InputHMI.rMinCurrent']}
+            />A
+        </div>
     </div>
     <div class="input-subfield">
         <div class="subtitle">Max current</div>
-        <div class="input-box"><input type="number" />A</div>
+        <div class="input-box">
+            <input
+                type="number"
+                bind:value={newTestObj['GVL_InputHMI.rMaxCurrent']}
+            />A
+        </div>
     </div>
     <div class="input-subfield">
         <div class="subtitle">Current step</div>
-        <div class="input-box"><input type="number" />A</div>
+        <div class="input-box">
+            <input
+                type="number"
+                bind:value={newTestObj['GVL_InputHMI.rCurrentStep']}
+            />A
+        </div>
     </div>
 </div>
 <div class="input-group">
     <div class="input-subfield">
         <div class="subtitle">Wait before measurement</div>
-        <div class="input-box"><input type="number" />ms</div>
+        <div class="input-box">
+            <input
+                type="number"
+                bind:value={newTestObj["GVL_InputHMI.tWaitBeforeMeasurement"]}
+            />ms
+        </div>
     </div>
 
     <div class="input-subfield">
@@ -45,13 +95,19 @@
 <div class="input-group">
     <div class="input-subfield">
         <div class="subtitle">CSV File name</div>
-        <div class="input-box wide"><input class="wide" type="text" />.csv</div>
+        <div class="input-box wide">
+            <input
+                class="wide"
+                type="text"
+                bind:value={newTestObj['GVL_InputHMI.sCSVName']}
+            />.csv
+        </div>
     </div>
 </div>
 <button><img src={onOffSvg} alt="" /> START</button>
 
 <style>
-     .part-name {
+    .part-name {
         margin-top: 60px;
         font-size: 23px;
     }
@@ -75,7 +131,7 @@
         flex-direction: row;
         justify-content: space-between;
     }
-   
+
     .input-subfield {
         margin-top: 6px;
         z-index: 1;

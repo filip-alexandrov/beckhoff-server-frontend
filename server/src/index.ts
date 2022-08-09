@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import path from "path";
 import { Application, Request, Response } from "express";
 import { plcManager } from "./twincat.js";
+import cors from "cors";
 
 const app: Application = express();
 
@@ -19,6 +20,7 @@ app.use(
     "C:\\Users\\User\\Documents\\GitHub\\beckhoff-server-frontend\\svelte-encrypted-spa\\build"
   )
 );
+app.use(cors());
 
 // serve website
 app.get("/", (req: Request, res: Response) =>
@@ -29,6 +31,7 @@ app.get("/", (req: Request, res: Response) =>
 
 // api endpoint for connecting to system
 app.post("/api/connectToPlc", async (req: Request, res: Response) => {
+  console.log("Connecting to PLC...")
   let tcResp = await plcManager.connectToPlc();
 
   res.json(tcResp);
@@ -49,69 +52,15 @@ app.get("/api/getPlcStatus", async (req: Request, res: Response) => {
 });
 
 // api endpoint for reading all inputs/outputs
-app.get("/api/readAll", async (req: Request, res: Response) => {
+app.get("/api", async (req: Request, res: Response) => {
   let tcResp = await plcManager.readAllValues();
 
   res.json(tcResp);
 });
 
-// api endpoint for writing to motor only
-app.post("/api/writeManualMotor", async (req: Request, res: Response) => {
-  let { bManualMoveMotor, rManualMotorPosition, rManualMotorVelocity } =
-    req.body;
-
-  let tcResp = await plcManager.writeManualMotor(
-    bManualMoveMotor,
-    rManualMotorPosition,
-    rManualMotorVelocity
-  );
-
-  res.json(tcResp);
-});
-
-// api endpoint for nullifying distance sensors
-app.post("/api/writeNullifyDistance", async (req: Request, res: Response) => {
-  let { bDistanceSensorNulling } =
-    req.body;
-
-  let tcResp = await plcManager.writeNullifyDistance(
-    bDistanceSensorNulling
-  );
-
-  res.json(tcResp);
-});
-
-// api endpoint to start/stop test
-app.post("/api/writeStartTest", async (req: Request, res: Response) => {
-  let {
-    e_OperationMode,
-    rMinCurrent,
-    rMaxCurrent,
-    rCurrentStep,
-    rMinAirgap,
-    rMaxAirgap,
-    rAirgapStep,
-    bStartButton,
-    bEmergencyStop,
-    sCSVName,
-    tWaitBeforeMeasurement,
-    bPause,
-  } = req.body;
-
-  let tcResp = await plcManager.writeStartTest(
-    e_OperationMode,
-    rMinCurrent,
-    rMaxCurrent,
-    rCurrentStep,
-    rMinAirgap,
-    rMaxAirgap,
-    rAirgapStep,
-    bStartButton,
-    bEmergencyStop,
-    sCSVName,
-    tWaitBeforeMeasurement,
-    bPause
-  );
+// api endpoint to write arbitrary object of values to plc
+app.post("/api", async (req: Request, res: Response) => {
+  let tcResp = await plcManager.writeToPlc(req.body);
 
   res.json(tcResp);
 });
