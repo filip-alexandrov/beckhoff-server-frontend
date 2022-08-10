@@ -9,10 +9,8 @@
 
     import connectionFailure from '../assets/connection-failure.svg'
     import connectionSuccess from '../assets/connection-success.svg'
-    import {
-        plcConnectionStatus
-    } from '../store/apiStatusCom'
-    import {connectToPlc, disconnectPlc} from '../store/requests'
+    import { plcConnectionStatus } from '../store/apiStatusCom'
+    import { connectToPlc, disconnectPlc } from '../store/requests'
 
     import { Modals, closeModal, openModal, modals } from 'svelte-modals'
     import { fade } from 'svelte/transition'
@@ -76,17 +74,25 @@
     </div>
     <div class="center">
         {#if $plcConnectionStatus.success == false}
-            <button on:click={connectToPlc}> <img src={connectionFailure} alt="" /> Connect to PLC</button>
+            <button on:click={connectToPlc}>
+                <img src={connectionFailure} alt="" /> Connect to PLC</button
+            >
         {:else if $plcConnectionStatus.success == true}
-            <button on:click={disconnectPlc}> <img src={connectionSuccess} alt="" /> Disconnect from PLC</button>
+            <button on:click={disconnectPlc}>
+                <img src={connectionSuccess} alt="" /> Disconnect from PLC</button
+            >
         {/if}
     </div>
     <div class="right">
-        <button
-            class:selected={displayMotorControl}
-            on:click={handleDisplayMotorControl}
-            ><img src={controlPanel} alt="" /> Contol panel</button
-        >
+        {#if $plcConnectionStatus.success == false}
+            <button> <img src={controlPanel} alt="" /> No connection</button>
+        {:else if $plcConnectionStatus.success == true}
+            <button
+                class:selected={displayMotorControl}
+                on:click={handleDisplayMotorControl}
+                ><img src={controlPanel} alt="" /> Contol panel</button
+            >
+        {/if}
     </div>
 </div>
 
@@ -95,7 +101,6 @@
         <Motor />
     </div>
 {/if}
-
 
 <style>
     .top-nav {

@@ -4,6 +4,8 @@
     import chartSettingsSvg from '../assets/chartSettings.svg'
     import { createEventDispatcher } from 'svelte'
     import onOffSvg from '../assets/on-off.svg'
+    import { allPlcVariables } from '../store/apiReadingCom'
+    import { writeValues } from '../store/requests'
 
     const dispatch = createEventDispatcher()
 
@@ -70,7 +72,7 @@
             Plotly.update(
                 gaugeId,
                 {
-                    value: Math.random() * 35,
+                    value: $allPlcVariables['GVL_OutputHMI.rMotorPosition'],
                 },
                 {},
             )
@@ -81,8 +83,42 @@
         clearInterval(interval)
     })
 
-    function handleChartSettings() {
-        dispatch('show-settings')
+    let errorMessage = ''
+
+    let newMotorMoveObj = {
+        'GVL_InputHMI.bManualMoveMotor': true,
+        'GVL_InputHMI.rManualMotorPosition': null,
+        'GVL_InputHMI.rManualMotorVelocity': null,
+    }
+
+    async function handleManualMotorStart() {
+        if (
+            newMotorMoveObj['GVL_InputHMI.rManualMotorPosition'] == null ||
+            newMotorMoveObj['GVL_InputHMI.rManualMotorVelocity'] == null
+        ) {
+            errorMessage = 'Please fill in all fields'
+            return
+        }
+
+        let tcRes = await writeValues(newMotorMoveObj)
+
+        if (tcRes.success == false) {
+            errorMessage = 'Error starting manual motor control'
+            return
+        }
+        errorMessage = ''
+    }
+
+    async function handleManualMotorStop() {
+        let tcRes = await writeValues({
+            'GVL_InputHMI.bManualMoveMotor': false,
+        })
+
+        if (tcRes.success == false) {
+            errorMessage = 'Error stopping manual motor control'
+            return
+        }
+        errorMessage = ''
     }
 </script>
 
@@ -91,20 +127,47 @@
         <div class="overlay">
             <div class="part-name">Motor control</div>
             <div class="speed-title">Live speed</div>
-            <div class="speed-live">25.78<span>&nbsp;mm/s</span></div>
+            <div class="speed-live">
+                {$allPlcVariables['GVL_OutputHMI.rMotorVelocity']}<span
+                    >&nbsp;mm/s</span
+                >
+            </div>
         </div>
     </div>
 
     <div class="motor-input">
         <div class="subtitle">Desired position</div>
-        <div class="position"><input type="number" />mm</div>
+        <div class="position">
+            <input
+                type="number"
+                bind:value={newMotorMoveObj[
+                    'GVL_InputHMI.rManualMotorPosition'
+                ]}
+            />mm
+        </div>
 
         <div class="subtitle">Velocity</div>
-        <div class="speed"><input type="number" />mm/s</div>
+        <div class="speed">
+            <input
+                type="number"
+                bind:value={newMotorMoveObj[
+                    'GVL_InputHMI.rManualMotorVelocity'
+                ]}
+            />mm/s
+        </div>
 
-        <button><img src={onOffSvg} alt="" /> START</button>
+        {#if $allPlcVariables['GVL_InputHMI.bManualMoveMotor']}
+            <button on:click={handleManualMotorStop}
+                ><img src={onOffSvg} alt="" /> STOP</button
+            >
+        {:else}
+            <button on:click={handleManualMotorStart}
+                ><img src={onOffSvg} alt="" /> START</button
+            >
+        {/if}
     </div>
 </div>
+<p>{errorMessage}</p>
 
 <style>
     .motor-control {
@@ -183,5 +246,10 @@
     }
     button img {
         margin-right: 5px;
+    }
+    p {
+        margin-top: 10px;
+        width: 100%;
+        text-align: right;
     }
 </style>

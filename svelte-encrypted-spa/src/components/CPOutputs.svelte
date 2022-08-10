@@ -1,89 +1,161 @@
 <script lang="ts">
     import pause from '../assets/pause.svg'
+    import { allPlcVariables } from '../store/apiReadingCom'
+    import onOff from '../assets/on-off.svg'
+    import chartResume from '../assets/chartResume.svg'
+    import { writeValues } from '../store/requests'
+
+    let measurementsFinished = 0
+    let overallMeasurements = 0
+
+    $: measurementsFinished = $allPlcVariables[
+        'GVL_OutputHMI.uiMeasurementsFinished'
+    ]
+        ? $allPlcVariables['GVL_OutputHMI.uiMeasurementsFinished']
+        : 0
+    $: overallMeasurements = $allPlcVariables[
+        'GVL_OutputHMI.uiOverallMeasurements'
+    ]
+        ? $allPlcVariables['GVL_OutputHMI.uiOverallMeasurements']
+        : 0
+
+    function handlePauseClick() {
+        writeValues({
+            'GVL_InputHMI.bPause': true,
+        })
+    }
+    function handleResumeClick() {
+        writeValues({
+            'GVL_InputHMI.bPause': false,
+        })
+    }
+    function handleStopClick() {
+        writeValues({
+            'GVL_InputHMI.bStartButton': false,
+        })
+    }
 </script>
 
-<h1>Monitor test</h1>
-<div class="upper">
-    <p>Progress</p>
-    <p>40%</p>
-</div>
-<div class="trace"><div class="loader" /></div>
-<div class="lower">
-    <p>Completed 365/700</p>
-    <p>ETA: 2h</p>
-</div>
-
-<div class="test-pause"><img src={pause} alt="" />PAUSE</div>
-
-<div class="input-group">
-    <div class="input-subfield">
-        <div class="subtitle">Min air gap</div>
-        <div class="input-box">
-            <div class="op-mode">0.21</div>
-            mm
-        </div>
-    </div>
-    <div class="input-subfield">
-        <div class="subtitle">Max air gap</div>
-        <div class="input-box">
-            <div class="op-mode">21</div>
-            mm
-        </div>
-    </div>
-    <div class="input-subfield">
-        <div class="subtitle">Air gap step</div>
-        <div class="input-box">
-            <div class="op-mode">32</div>
-            mm
-        </div>
-    </div>
-</div>
-<div class="input-group">
-    <div class="input-subfield">
-        <div class="subtitle">Min current</div>
-        <div class="input-box">
-            <div class="op-mode">32.32</div>
-            A
-        </div>
-    </div>
-    <div class="input-subfield">
-        <div class="subtitle">Max current</div>
-        <div class="input-box">
-            <div class="op-mode">12.32</div>
-            A
-        </div>
-    </div>
-    <div class="input-subfield">
-        <div class="subtitle">Current step</div>
-        <div class="input-box">
-            <div class="op-mode">13.32</div>
-            A
-        </div>
-    </div>
-</div>
-<div class="input-group">
-    <div class="input-subfield">
-        <div class="subtitle">Wait before measurement</div>
-        <div class="input-box">
-            <div class="op-mode">432</div>
-            ms
-        </div>
+{#if overallMeasurements > 0}
+    <h1>Monitor test</h1>
+    <div class="upper">
+        <p>Progress</p>
+        <p>
+            {((measurementsFinished / overallMeasurements) * 100).toFixed(2)}%
+        </p>
     </div>
 
-    <div class="input-subfield">
-        <div class="subtitle">Op. mode</div>
-        <div class="input-box"><div class="op-mode">A1</div></div>
+    <div class="trace">
+        <div
+            class="loader"
+            style="width: {(measurementsFinished / overallMeasurements) *
+                100}%;"
+        />
     </div>
-</div>
-<div class="input-group">
-    <div class="input-subfield">
-        <div class="subtitle">CSV File name</div>
-        <div class="input-box wide">
-            <div class="op-mode wide">test_2022_sept22</div>
-            .csv
+    <div class="lower">
+        <p>Completed {measurementsFinished}/{measurementsFinished}</p>
+        <p>ETA: -/- h</p>
+    </div>
+
+    <div class="test-pause">
+        {#if $allPlcVariables['GVL_InputHMI.bPause']}
+            <div on:click={handleResumeClick}>
+                <img src={chartResume} alt="" />RESUME
+            </div>
+        {:else}
+            <div on:click={handlePauseClick}>
+                <img src={pause} alt="" />PAUSE
+            </div>
+        {/if}
+        <div on:click={handleStopClick}><img src={onOff} alt="" />STOP</div>
+    </div>
+
+    <div class="input-group">
+        <div class="input-subfield">
+            <div class="subtitle">Min air gap</div>
+            <div class="input-box">
+                <div class="op-mode">
+                    {$allPlcVariables['GVL_InputHMI.rMinAirgap']}
+                </div>
+                mm
+            </div>
+        </div>
+        <div class="input-subfield">
+            <div class="subtitle">Max air gap</div>
+            <div class="input-box">
+                <div class="op-mode">
+                    {$allPlcVariables['GVL_InputHMI.rMaxAirgap']}
+                </div>
+                mm
+            </div>
+        </div>
+        <div class="input-subfield">
+            <div class="subtitle">Air gap step</div>
+            <div class="input-box">
+                <div class="op-mode">
+                    {$allPlcVariables['GVL_InputHMI.rAirgapStep']}
+                </div>
+                mm
+            </div>
         </div>
     </div>
-</div>
+    <div class="input-group">
+        <div class="input-subfield">
+            <div class="subtitle">Min current</div>
+            <div class="input-box">
+                <div class="op-mode">
+                    {$allPlcVariables['GVL_InputHMI.rMinCurrent']}
+                </div>
+                A
+            </div>
+        </div>
+        <div class="input-subfield">
+            <div class="subtitle">Max current</div>
+            <div class="input-box">
+                <div class="op-mode">
+                    {$allPlcVariables['GVL_InputHMI.rMaxCurrent']}
+                </div>
+                A
+            </div>
+        </div>
+        <div class="input-subfield">
+            <div class="subtitle">Current step</div>
+            <div class="input-box">
+                <div class="op-mode">
+                    {$allPlcVariables['GVL_InputHMI.rCurrentStep']}
+                </div>
+                A
+            </div>
+        </div>
+    </div>
+    <div class="input-group">
+        <div class="input-subfield">
+            <div class="subtitle">Wait before measurement</div>
+            <div class="input-box">
+                <div class="op-mode">
+                    {$allPlcVariables['GVL_InputHMI.tWaitBeforeMeasurement']}
+                </div>
+                ms
+            </div>
+        </div>
+
+        <div class="input-subfield">
+            <div class="subtitle">Op. mode</div>
+            <div class="input-box"><div class="op-mode">A1</div></div>
+        </div>
+    </div>
+    <div class="input-group">
+        <div class="input-subfield">
+            <div class="subtitle">CSV File name</div>
+            <div class="input-box wide">
+                <div class="op-mode wide">
+                    {$allPlcVariables['GVL_InputHMI.sCSVName']}
+                </div>
+                .csv
+            </div>
+        </div>
+    </div>
+{/if}
 
 <style>
     h1 {
@@ -102,7 +174,6 @@
     .loader {
         position: absolute;
         top: 0;
-        width: 30%;
         height: 35px;
         border-radius: 6px;
         background-color: #dfe300;
@@ -117,13 +188,17 @@
     }
     .test-pause {
         display: flex;
-        justify-content: right;
+        justify-content: space-between;
         align-items: center;
         position: relative;
         margin-top: 10px;
         margin-bottom: 20px;
 
         cursor: pointer;
+    }
+    .test-pause div {
+        display: flex;
+        align-items: center;
     }
 
     .test-pause img {

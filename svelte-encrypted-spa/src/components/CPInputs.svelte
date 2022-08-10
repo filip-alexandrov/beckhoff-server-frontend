@@ -1,6 +1,11 @@
 <script lang="ts">
     import onOffSvg from '../assets/on-off.svg'
 
+    import { Modals, closeModal, openModal, modals } from 'svelte-modals'
+    import { fade, fly } from 'svelte/transition'
+    import { circInOut, linear } from 'svelte/easing'
+    import Modal from './Modal.svelte'
+
     let newTestObj = {
         'GVL_InputHMI.e_OperationMode': 'A1',
         'GVL_InputHMI.bEmergencyStop': false,
@@ -12,8 +17,32 @@
         'GVL_InputHMI.rMinCurrent': null,
         'GVL_InputHMI.rMaxCurrent': null,
         'GVL_InputHMI.rCurrentStep': null,
-        "GVL_InputHMI.tWaitBeforeMeasurement" : null, 
+        'GVL_InputHMI.tWaitBeforeMeasurement': null,
         'GVL_InputHMI.sCSVName': null,
+    }
+
+    let configurationMessage = 'CONFIGURE'
+    function handleConfigureTest() {
+        if (
+            newTestObj['GVL_InputHMI.rMinAirgap'] != null &&
+            newTestObj['GVL_InputHMI.rMaxAirgap'] != null &&
+            newTestObj['GVL_InputHMI.rAirgapStep'] != null &&
+            newTestObj['GVL_InputHMI.rMinCurrent'] != null &&
+            newTestObj['GVL_InputHMI.rMaxCurrent'] != null &&
+            newTestObj['GVL_InputHMI.rCurrentStep'] != null &&
+            newTestObj['GVL_InputHMI.tWaitBeforeMeasurement'] != null &&
+            newTestObj['GVL_InputHMI.sCSVName'] != null
+        ) {
+            openModal(Modal, { newTestObj: newTestObj })
+        } else {
+            configurationMessage = 'Please fill all fields'
+
+            console.log(configurationMessage)
+
+            setTimeout(() => {
+                configurationMessage = 'CONFIGURE'
+            }, 2000)
+        }
     }
 </script>
 
@@ -82,7 +111,7 @@
         <div class="input-box">
             <input
                 type="number"
-                bind:value={newTestObj["GVL_InputHMI.tWaitBeforeMeasurement"]}
+                bind:value={newTestObj['GVL_InputHMI.tWaitBeforeMeasurement']}
             />ms
         </div>
     </div>
@@ -104,7 +133,19 @@
         </div>
     </div>
 </div>
-<button><img src={onOffSvg} alt="" /> START</button>
+<button on:click={handleConfigureTest}
+    ><img src={onOffSvg} alt="" /> {configurationMessage}</button
+>
+
+<!-- "Before test" configuration window -->
+<Modals>
+    <div
+        slot="backdrop"
+        class="backdrop"
+        transition:fade
+        on:click={closeModal}
+    />
+</Modals>
 
 <style>
     .part-name {
@@ -175,5 +216,13 @@
     }
     button img {
         margin-right: 5px;
+    }
+    .backdrop {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.5);
     }
 </style>

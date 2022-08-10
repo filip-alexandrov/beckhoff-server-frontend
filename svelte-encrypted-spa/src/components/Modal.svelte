@@ -7,9 +7,47 @@
     } from 'svelte-modals'
     import { fly } from 'svelte/transition'
 
-    export let isOpen
-    export let title
-    export let message
+    import {writeValues} from "../store/requests"
+
+    export let newTestObj; 
+    export let isOpen; 
+
+    let errorMessage = ''
+
+    let step1 = false
+    let step2 = false
+    let step3 = false
+    let step4 = false
+
+    function handleConfirmationClick(stepNumber) {
+        switch (stepNumber) {
+            case 1:
+                step1 = !step1
+                break
+            case 2:
+                step2 = !step2
+                break
+            case 3:
+                step3 = !step3
+                break
+
+            default:
+                break
+        }
+    }
+
+    async function handleStartButton() {
+        if (step1 && step2 && step3) {
+            let tcRes = await writeValues(newTestObj)
+            if (tcRes.success == true){
+                step4 = true; 
+            } else {
+                errorMessage = JSON.stringify(tcRes.errorMessage)
+            }
+        } else {
+            errorMessage = 'Please complete all steps'
+        }
+    }
 </script>
 
 {#if isOpen}
@@ -21,9 +59,45 @@
         on:outroend
     >
         <div class="contents">
-            <h2>{title}</h2>
-            <p>{message}</p>
-            <button on:click={closeModal}>Close One</button>
+            <h2>Nullify distance sensors</h2>
+            <p>Click to confirm each action</p>
+            <div class="actions">
+                <div class="action">
+                    <p>The nullifying plate is placed on the sensor</p>
+                    <button
+                        class:pressed={step1}
+                        on:click={() => handleConfirmationClick(1)}
+                        >Confirm</button
+                    >
+                </div>
+                <div class="action">
+                    <p>Nullify the distance sensors</p>
+                    <button
+                        class:pressed={step2}
+                        on:click={() => handleConfirmationClick(2)}
+                        >Nullify</button
+                    >
+                </div>
+                <div class="action">
+                    <p>The nullifying plate is removed</p>
+                    <button
+                        class:pressed={step3}
+                        on:click={() => handleConfirmationClick(3)}
+                        >Confirm</button
+                    >
+                </div>
+                <div class="action">
+                    <p>Press to start the test</p>
+                    <button
+                        class:pressed={step4}
+                        on:click={() => handleStartButton()}>START</button
+                    >
+                </div>
+            </div>
+            <p>{errorMessage}</p>
+            <button class="close" on:click={closeModal}
+                >Close configuration</button
+            >
         </div>
     </div>
 {/if}
@@ -41,6 +115,7 @@
 
         /* allow click-through to backdrop */
         pointer-events: none;
+        z-index: 1;
     }
 
     .contents {
@@ -50,24 +125,45 @@
         background: white;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: left;
         pointer-events: auto;
+        color: #323232;
+    }
+    .actions {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+    .action {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .action button {
+        width: 90px;
+        background-color: #323232;
+        color: #fff;
+        cursor: pointer;
+        height: 30px;
+        border-radius: 3px;
+        margin-bottom: 4px;
+        margin-left: 20px;
+    }
+    .action .pressed {
+        background-color: #3d7d00;
+    }
+    .close {
+        background-color: #323232;
+        color: #fff;
+        cursor: pointer;
+        height: 30px;
+        border-radius: 3px;
+        width: 100%;
     }
 
     h2 {
-        text-align: center;
         font-size: 24px;
-    }
-
-    p {
-        text-align: center;
-        margin-top: 16px;
-    }
-
-    .actions {
-        margin-top: 32px;
-        display: flex;
-        justify-content: space-between;
-        gap: 8px;
     }
 </style>
