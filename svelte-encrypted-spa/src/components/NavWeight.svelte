@@ -1,26 +1,25 @@
 <script>
-    let values = [14, 43, 32, 53]
-    let weightHigh = 23
+    import {
+        fullSensorData,
+        sensorUnits,
+        weightSensors,
+    } from '../store/sensors'
 </script>
 
 <div class="left-nav">
     <div class="category">
         <div class="header">WEIGHT</div>
-        {#each values as value, index}
+        {#each weightSensors as weightSensor}
             <button>
                 <div class="description">
-                    Weight #{index + 1}
+                    {weightSensor}
                 </div>
-                <div class="value">{value}N</div>
+                <div class="value">
+                    {$fullSensorData[weightSensor]}
+                    {$sensorUnits[weightSensor]}
+                </div>
             </button>
         {/each}
-
-        <button>
-            <div class="description">
-                Weight #5
-            </div>
-            <div class="value">{weightHigh}kN</div>
-        </button>
     </div>
 </div>
 

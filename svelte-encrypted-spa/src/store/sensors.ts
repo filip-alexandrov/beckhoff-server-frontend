@@ -45,11 +45,11 @@ export const sensorUnits = writable({
     'Temperature #8': "°C",
     'Virtual Temperature': "°C",
 
-    'Baumer #1': "N",
-    'Baumer #2': "N",
-    'Baumer #3': "N",
-    'Baumer #4': "N",
-    'HBM #1': "N",
+    'Small Force #1': "N",
+    'Small Force #2': "N",
+    'Small Force #3': "N",
+    'Small Force #4': "N",
+    'Big Force': "N",
 
     'IDL #1': "mm",
     'IDL #2': "mm",
@@ -75,12 +75,12 @@ export const fullSensorData = writable({
     'Temperature #8': 0,
     'Virtual Temperature': 0,
 
-    'Baumer #1': 0,
-    'Baumer #2': 0,
-    'Baumer #3': 0,
-    'Baumer #4': 0,
-    'HBM #1': 0,
-
+    'Small Force #1': 0,
+    'Small Force #2': 0,
+    'Small Force #3': 0,
+    'Small Force #4': 0,
+    'Big Force': 0,
+    
     'IDL #1': 0,
     'IDL #2': 0,
     'IDL #3': 0,

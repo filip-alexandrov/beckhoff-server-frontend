@@ -1,16 +1,20 @@
 <script>
-    export let values = [91]
+    import { fullSensorData, sensorUnits, otherSensors } from '../store/sensors'
 </script>
 
 <div class="left-nav">
     <div class="category">
-        <div class="header">ORIENTATION</div>
-        {#each values as value, index}
+        <div class="header">OTHER</div>
+        {#each otherSensors as otherSensor}
             <button>
                 <div class="description">
-                    Orientation #{index + 1}
+                    {otherSensor}
                 </div>
-                <div class="value">{value}°</div>
+
+                <div class="value">
+                    {$fullSensorData[otherSensor]}
+                    {$sensorUnits[otherSensor]}
+                </div>
             </button>
         {/each}
     </div>

@@ -1,16 +1,23 @@
 <script>
-    export let values = [14, 43, 32, 53, 23, 54, 32, 23]
+    import {
+        fullSensorData,
+        sensorUnits,
+        temperatureSensors,
+    } from '../store/sensors'
 </script>
 
 <div class="left-nav">
     <div class="category">
         <div class="header">TEMPERATURE</div>
-        {#each values as value, index}
+        {#each temperatureSensors as temperatureSensor}
             <button>
                 <div class="description">
-                    Temperature #{index + 1}
+                    {temperatureSensor}
                 </div>
-                <div class="value">{value}°C</div>
+                <div class="value">
+                    {$fullSensorData[temperatureSensor]}
+                    {$sensorUnits[temperatureSensor]}
+                </div>
             </button>
         {/each}
     </div>
