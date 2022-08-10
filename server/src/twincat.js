@@ -1,6 +1,7 @@
 const ads = require("ads-client");
 const { json } = require("body-parser");
 const fs = require("fs");
+const path = require("path");
 
 // loggs events in the console (shown in node-windows)
 function logger(module, func, type, message) {
@@ -27,7 +28,7 @@ let plcManager = {
   async loadDatabase() {
     logger("twincat", "loadDatabase", "info", "Loading database");
 
-    let data = fs.readFileSync("./database.json");
+    let data = fs.readFileSync(path.join(__dirname, "database.json"));
     this.database = JSON.parse(data);
   },
 
@@ -46,17 +47,17 @@ let plcManager = {
         );
 
         // init databases and start querying runtime values
-        await this.loadDatabase(); 
-        this.startWritingToDatabase(); 
+        await this.loadDatabase();
+        this.startWritingToDatabase();
 
-        console.log(`Connected to the ${res.targetAmsNetId} Router assigned us AmsNetId ${res.localAmsNetId} and port ${res.localAdsPort}`)
+        console.log(
+          `Connected to the ${res.targetAmsNetId} Router assigned us AmsNetId ${res.localAmsNetId} and port ${res.localAdsPort}`
+        );
 
         readObj.success = true;
       })
       .catch((err) => {
         logger("twincat", "connectToPlc", "error", err);
-
-        console.log(err)
 
         readObj.success = false;
       });
@@ -64,7 +65,7 @@ let plcManager = {
     return readObj;
   },
 
-  // Disconnects from Twincat system
+  // Disconnects from Twincat system - currently disallowed
   async disconnectPlc() {
     let readObj = {};
 
@@ -140,8 +141,16 @@ let plcManager = {
           let lastD = lastEntry.D;
           let lastI = lastEntry.I;
 
+          // Check if last DB values are different from current DB values
           if (currentF != lastF || currentD != lastD || currentI != lastI) {
-            logger("twincat", "startWritingToDatabase", "info", "Writing to database");
+            console.log("New data in DB");
+
+            logger(
+              "twincat",
+              "startWritingToDatabase",
+              "info",
+              "Writing to database"
+            );
 
             this.database.push({
               F: currentF,
@@ -149,23 +158,20 @@ let plcManager = {
               I: currentI,
             });
 
-            fs.writeFileSync(
-              "./database.json",
-              JSON.stringify(this.database)
-            );
+            fs.writeFileSync(path.join(__dirname, "database.json"), JSON.stringify(this.database));
           }
         })
         .catch((err) => {
-          console.log(logger("twincat", "startWritingToDatabase", "error", err));
-        });
+          logger("twincat", "startWritingToDatabase", "error", err);
 
-      // Check if last DB values are different from current DB values
-    }, 1000); // TODO:  set to 100ms
+          // try to establish connection again
+          this.connectToPlc();
+        });
+    }, 750); // TODO:  set to 100ms
   },
 
   // Will read all input and output values from Twincat
   async readAllValues() {
-    console.log("Reading all values...\n");
     let readObj = {};
 
     await Promise.all([
@@ -204,6 +210,7 @@ let plcManager = {
       this.client.readSymbol("GVL_InputHMI.bDistanceSensorNullingPlateRemoved"),
     ])
       .then((response) => {
+        console.log("All values were read")
         readObj.success = true;
 
         for (let element of response) {
@@ -211,7 +218,7 @@ let plcManager = {
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.log("Error when reading all values");
 
         readObj.success = false;
         readObj.errorMessage = err;
@@ -221,21 +228,24 @@ let plcManager = {
   },
 
   // write arbitrary prepared object to Runtime
-  async writeToPlc(
-    writeObj
-  ) {
+  async writeToPlc(writeObj) {
     console.log("Writing values to PLC... \n");
 
     let readObj = {};
     let promises = [];
 
-    for(let key in writeObj) {
+    for (let key in writeObj) {
       promises.push(this.client.writeSymbol(key, writeObj[key]));
     }
 
     await Promise.all(promises)
       .then((response) => {
-        logger("twincat", "writeToPlc", "info", "Writting to PLC was successful");
+        logger(
+          "twincat",
+          "writeToPlc",
+          "info",
+          "Writting to PLC was successful"
+        );
 
         readObj.success = true;
       })
@@ -275,10 +285,10 @@ async function main() {
   await plcManager.loadDatabase();
   await plcManager.connectToPlc();
   await plcManager.getPlcStatus();
-  let resp = await plcManager.readAllValues(); 
+  let resp = await plcManager.readAllValues();
   plcManager.startWritingToDatabase();
 
-  console.log(JSON.stringify(resp))
+  console.log(JSON.stringify(resp));
 }
 
 // main(); //  causes run in the same port

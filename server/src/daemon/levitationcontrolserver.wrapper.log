@@ -1,0 +1,2 @@
+2022-08-10 13:14:03 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 C:\Users\User\AppData\Roaming\npm\node_modules\node-windows\lib\wrapper.js --file C:\Users\User\Documents\GitHub\beckhoff-server-frontend\server\src\index.js --scriptoptions= --log "LevitationControlServer wrapper" --grow 0 --wait 1 --maxrestarts 10000 --abortonerror n --stopparentfirst undefined
+2022-08-10 13:14:03 - Started 19784

@@ -5,6 +5,8 @@
     import { fade, fly } from 'svelte/transition'
     import { circInOut, linear } from 'svelte/easing'
     import Modal from './Modal.svelte'
+    import { allPlcVariables } from '../store/apiReadingCom'
+
 
     let newTestObj = {
         'GVL_InputHMI.e_OperationMode': 'A1',
@@ -44,98 +46,102 @@
             }, 2000)
         }
     }
+
+
 </script>
 
-<div class="part-name">Start new test</div>
-<div class="input-group">
-    <div class="input-subfield">
-        <div class="subtitle">Min air gap</div>
-        <div class="input-box">
-            <input
-                type="number"
-                bind:value={newTestObj['GVL_InputHMI.rMinAirgap']}
-            />mm
-        </div>
-    </div>
-    <div class="input-subfield">
-        <div class="subtitle">Max air gap</div>
-        <div class="input-box">
-            <input
-                type="number"
-                bind:value={newTestObj['GVL_InputHMI.rMaxAirgap']}
-            />mm
-        </div>
-    </div>
-    <div class="input-subfield">
-        <div class="subtitle">Air gap step</div>
-        <div class="input-box">
-            <input
-                type="number"
-                bind:value={newTestObj['GVL_InputHMI.rAirgapStep']}
-            />mm
-        </div>
-    </div>
-</div>
-<div class="input-group">
-    <div class="input-subfield">
-        <div class="subtitle">Min current</div>
-        <div class="input-box">
-            <input
-                type="number"
-                bind:value={newTestObj['GVL_InputHMI.rMinCurrent']}
-            />A
-        </div>
-    </div>
-    <div class="input-subfield">
-        <div class="subtitle">Max current</div>
-        <div class="input-box">
-            <input
-                type="number"
-                bind:value={newTestObj['GVL_InputHMI.rMaxCurrent']}
-            />A
-        </div>
-    </div>
-    <div class="input-subfield">
-        <div class="subtitle">Current step</div>
-        <div class="input-box">
-            <input
-                type="number"
-                bind:value={newTestObj['GVL_InputHMI.rCurrentStep']}
-            />A
-        </div>
-    </div>
-</div>
-<div class="input-group">
-    <div class="input-subfield">
-        <div class="subtitle">Wait before measurement</div>
-        <div class="input-box">
-            <input
-                type="number"
-                bind:value={newTestObj['GVL_InputHMI.tWaitBeforeMeasurement']}
-            />ms
-        </div>
-    </div>
-
-    <div class="input-subfield">
-        <div class="subtitle">Op. mode</div>
-        <div class="input-box"><div class="op-mode">A1</div></div>
-    </div>
-</div>
-<div class="input-group">
-    <div class="input-subfield">
-        <div class="subtitle">CSV File name</div>
-        <div class="input-box wide">
-            <input
-                class="wide"
-                type="text"
-                bind:value={newTestObj['GVL_InputHMI.sCSVName']}
-            />.csv
-        </div>
-    </div>
-</div>
-<button on:click={handleConfigureTest}
-    ><img src={onOffSvg} alt="" /> {configurationMessage}</button
->
+{#if $allPlcVariables['GVL_OutputHMI.uiOverallMeasurements'] == 0}
+     <div class="part-name">Start new test</div>
+     <div class="input-group">
+         <div class="input-subfield">
+             <div class="subtitle">Min air gap</div>
+             <div class="input-box">
+                 <input
+                     type="number"
+                     bind:value={newTestObj['GVL_InputHMI.rMinAirgap']}
+                 />mm
+             </div>
+         </div>
+         <div class="input-subfield">
+             <div class="subtitle">Max air gap</div>
+             <div class="input-box">
+                 <input
+                     type="number"
+                     bind:value={newTestObj['GVL_InputHMI.rMaxAirgap']}
+                 />mm
+             </div>
+         </div>
+         <div class="input-subfield">
+             <div class="subtitle">Air gap step</div>
+             <div class="input-box">
+                 <input
+                     type="number"
+                     bind:value={newTestObj['GVL_InputHMI.rAirgapStep']}
+                 />mm
+             </div>
+         </div>
+     </div>
+     <div class="input-group">
+         <div class="input-subfield">
+             <div class="subtitle">Min current</div>
+             <div class="input-box">
+                 <input
+                     type="number"
+                     bind:value={newTestObj['GVL_InputHMI.rMinCurrent']}
+                 />A
+             </div>
+         </div>
+         <div class="input-subfield">
+             <div class="subtitle">Max current</div>
+             <div class="input-box">
+                 <input
+                     type="number"
+                     bind:value={newTestObj['GVL_InputHMI.rMaxCurrent']}
+                 />A
+             </div>
+         </div>
+         <div class="input-subfield">
+             <div class="subtitle">Current step</div>
+             <div class="input-box">
+                 <input
+                     type="number"
+                     bind:value={newTestObj['GVL_InputHMI.rCurrentStep']}
+                 />A
+             </div>
+         </div>
+     </div>
+     <div class="input-group">
+         <div class="input-subfield">
+             <div class="subtitle">Wait before measurement</div>
+             <div class="input-box">
+                 <input
+                     type="number"
+                     bind:value={newTestObj['GVL_InputHMI.tWaitBeforeMeasurement']}
+                 />ms
+             </div>
+         </div>
+     
+         <div class="input-subfield">
+             <div class="subtitle">Op. mode</div>
+             <div class="input-box"><div class="op-mode">A1</div></div>
+         </div>
+     </div>
+     <div class="input-group">
+         <div class="input-subfield">
+             <div class="subtitle">CSV File name</div>
+             <div class="input-box wide">
+                 <input
+                     class="wide"
+                     type="text"
+                     bind:value={newTestObj['GVL_InputHMI.sCSVName']}
+                 />.csv
+             </div>
+         </div>
+     </div>
+     <button on:click={handleConfigureTest}
+         ><img src={onOffSvg} alt="" /> {configurationMessage}</button
+     >
+{/if}
 
 <!-- "Before test" configuration window -->
 <Modals>

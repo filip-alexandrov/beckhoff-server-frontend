@@ -53,7 +53,7 @@
         />
     </div>
     <div class="lower">
-        <p>Completed {measurementsFinished}/{measurementsFinished}</p>
+        <p>Completed {measurementsFinished}/{overallMeasurements}</p>
         <p>ETA: -/- h</p>
     </div>
 

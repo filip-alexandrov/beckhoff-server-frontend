@@ -79,7 +79,7 @@
             >
         {:else if $plcConnectionStatus.success == true}
             <button on:click={disconnectPlc}>
-                <img src={connectionSuccess} alt="" /> Disconnect from PLC</button
+                <img src={connectionSuccess} alt="" /> PLC Connected</button
             >
         {/if}
     </div>

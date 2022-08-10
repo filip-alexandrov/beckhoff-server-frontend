@@ -6,11 +6,15 @@ import { goto } from 'svelte-pathfinder';
     function handleDoubleClick(){
         goto("/mariana");
     }
+
+    function handleClick(){
+        goto("/");
+    }
 </script>
 
-<div on:dblclick={handleDoubleClick} class="header">
+<div on:click={handleClick} on:dblclick={handleDoubleClick} class="header">
     <img src={logo} alt="" />
-    <a href="/">Levitation</a>
+    <div>Levitation</div>
 </div>
 
 <style>
@@ -27,6 +31,7 @@ import { goto } from 'svelte-pathfinder';
         flex-direction: row;
 
         cursor: pointer;
+        user-select: none;
     }
     .header img {
         height: 30px;

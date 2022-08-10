@@ -1,10 +1,12 @@
 "use strict";
 var Service = require('node-windows').Service;
+const path = require("path");
+
 // Create a new service object
 var svc = new Service({
-    name: 'index.js express server',
+    name: 'LevitationControlServer',
     description: 'Server running on port 80',
-    script: 'C:\\Users\\User\\Documents\\GitHub\\beckhoff-server-frontend\\server\\build\\index.js',
+    script: path.join(__dirname, "index.js"),
     wait: 1, 
     maxRestarts: 10000, 
     grow: 0, 
