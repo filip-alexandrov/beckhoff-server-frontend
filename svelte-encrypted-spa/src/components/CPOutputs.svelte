@@ -7,6 +7,7 @@
 
     let measurementsFinished = 0
     let overallMeasurements = 0
+    let etaTime = 0
 
     $: measurementsFinished = $allPlcVariables[
         'GVL_OutputHMI.uiMeasurementsFinished'
@@ -17,6 +18,11 @@
         'GVL_OutputHMI.uiOverallMeasurements'
     ]
         ? $allPlcVariables['GVL_OutputHMI.uiOverallMeasurements']
+        : 0
+    $: etaTime = $allPlcVariables['GVL_OutputHMI.tElapsedTime']
+        ? ($allPlcVariables['GVL_OutputHMI.tElapsedTime'] *
+              overallMeasurements) /
+          measurementsFinished
         : 0
 
     function handlePauseClick() {
@@ -54,7 +60,7 @@
     </div>
     <div class="lower">
         <p>Completed {measurementsFinished}/{overallMeasurements}</p>
-        <p>ETA: -/- h</p>
+        <p>ETA: {(etaTime / 1000 / 60).toFixed(2)} min</p>
     </div>
 
     <div class="test-pause">

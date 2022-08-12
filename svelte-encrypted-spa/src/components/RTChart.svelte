@@ -13,6 +13,50 @@
     dataX.push(Date.now())
     dataY.push($fullSensorData[activeSensor])
 
+    let yaxisOptions = {
+        axisBorder: {
+            show: true,
+            color: '#fff',
+            width: '3px',
+            offsetX: -5,
+        },
+        title: {
+            text: $sensorUnits[activeSensor],
+            offsetX: 8,
+            offsetY: 0,
+            style: {
+                color: '#fff',
+                fontSize: '15px',
+                fontFamily: 'Outfit, Arial, sans-serif',
+                fontWeight: 500,
+            },
+        },
+        labels: {
+            style: {
+                colors: '#fff',
+                fontFamily: 'Outfit, Arial, sans-serif',
+                fontWeight: 400,
+            },
+            formatter: function (val) {
+                return val.toFixed(2)
+            },
+        },
+        axisTicks: {
+            show: false,
+        },
+        crosshairs: {
+            show: true,
+            stroke: {
+                color: '#fff',
+                dashArray: 3,
+            },
+        },
+        tooltip: {
+            enabled: true,
+            offsetX: -30,
+        },
+    }
+
     let options = {
         colors: ['#DFE300', '#4576b5'],
         fill: {
@@ -55,49 +99,7 @@
         markers: {
             size: 0,
         },
-        yaxis: {
-            axisBorder: {
-                show: true,
-                color: '#fff',
-                width: '3px',
-                offsetX: -5,
-            },
-            title: {
-                text: $sensorUnits[activeSensor],
-                offsetX: 8,
-                offsetY: 0,
-                style: {
-                    color: '#fff',
-                    fontSize: '15px',
-                    fontFamily: 'Outfit, Arial, sans-serif',
-                    fontWeight: 500,
-                },
-            },
-            labels: {
-                style: {
-                    colors: '#fff',
-                    fontFamily: 'Outfit, Arial, sans-serif',
-                    fontWeight: 400,
-                },
-                formatter: function (val) {
-                    return val.toFixed(2)
-                },
-            },
-            axisTicks: {
-                show: false,
-            },
-            crosshairs: {
-                show: true,
-                stroke: {
-                    color: '#fff',
-                    dashArray: 3,
-                },
-            },
-            tooltip: {
-                enabled: true,
-                offsetX: -30,
-            },
-        },
+        yaxis: yaxisOptions,
         xaxis: {
             type: 'datetime',
             categories: dataX,
@@ -184,7 +186,6 @@
 
             let toAppend = $fullSensorData[activeSensor]
 
-
             dataX.push(Date.now())
             chart.appendData([
                 {
@@ -211,19 +212,26 @@
         updateChart()
     }
 
+    // Updates the chart after selecting a new sensor
     function updateChart() {
         clearInterval(interval)
 
-        chart.updateSeries([
-            {
-                data: [
-                    {
-                        x: Date.now(),
-                        y: $fullSensorData[activeSensor],
-                    },
-                ],
-            },
-        ])
+        // Change y axis units
+        yaxisOptions.title.text = $sensorUnits[activeSensor];
+
+        chart.updateOptions({
+            series: [
+                {
+                    data: [
+                        {
+                            x: Date.now(),
+                            y: $fullSensorData[activeSensor],
+                        },
+                    ],
+                },
+            ],
+            yaxis: yaxisOptions,
+        })
 
         interval = setInterval(function () {
             if (isPaused) {

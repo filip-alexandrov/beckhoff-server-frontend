@@ -6,6 +6,7 @@
     import onOffSvg from '../assets/on-off.svg'
     import { allPlcVariables } from '../store/apiReadingCom'
     import { writeValues } from '../store/requests'
+    import warning from '../assets/warning.svg'
 
     const dispatch = createEventDispatcher()
 
@@ -88,13 +89,11 @@
     let newMotorMoveObj = {
         'GVL_InputHMI.bManualMoveMotor': true,
         'GVL_InputHMI.rManualMotorPosition': null,
-        'GVL_InputHMI.rManualMotorVelocity': null,
     }
 
     async function handleManualMotorStart() {
         if (
-            newMotorMoveObj['GVL_InputHMI.rManualMotorPosition'] == null ||
-            newMotorMoveObj['GVL_InputHMI.rManualMotorVelocity'] == null
+            newMotorMoveObj['GVL_InputHMI.rManualMotorPosition'] == null
         ) {
             errorMessage = 'Please fill in all fields'
             return
@@ -116,6 +115,18 @@
 
         if (tcRes.success == false) {
             errorMessage = 'Error stopping manual motor control'
+            return
+        }
+        errorMessage = ''
+    }
+
+    async function handleResetMotorFault(){
+        let tcRes = await writeValues({
+            'GVL_InputHMI.bMotorResetFault': true,
+        })
+
+        if (tcRes.success == false) {
+            errorMessage = 'Error resetting motor fault'
             return
         }
         errorMessage = ''
@@ -150,13 +161,16 @@
         <div class="speed">
             <input
                 type="number"
-                bind:value={newMotorMoveObj[
-                    'GVL_InputHMI.rManualMotorVelocity'
-                ]}
+                disabled
+                placeholder="max"
             />mm/s
         </div>
 
-        {#if $allPlcVariables['GVL_InputHMI.bManualMoveMotor']}
+        {#if $allPlcVariables['GVL_OutputHMI.bMotorFault']}
+            <button on:click={handleResetMotorFault}
+                ><img src={warning} alt="" />Reset Fault</button
+            >
+        {:else if $allPlcVariables['GVL_InputHMI.bManualMoveMotor']}
             <button on:click={handleManualMotorStop}
                 ><img src={onOffSvg} alt="" /> STOP</button
             >

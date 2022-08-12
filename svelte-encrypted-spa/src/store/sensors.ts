@@ -7,8 +7,6 @@ export const temperatureSensors = [
     'Temperature #4',
     'Temperature #5',
     'Temperature #6',
-    'Temperature #7',
-    'Temperature #8',
     'Virtual Temperature',
 ]
 export const weightSensors = [
@@ -41,8 +39,6 @@ export const sensorUnits = writable({
     'Temperature #4': "°C",
     'Temperature #5': "°C",
     'Temperature #6': "°C",
-    'Temperature #7': "°C",
-    'Temperature #8': "°C",
     'Virtual Temperature': "°C",
 
     'Small Force #1': "N",
@@ -71,8 +67,6 @@ export const fullSensorData = writable({
     'Temperature #4': 0,
     'Temperature #5': 0,
     'Temperature #6': 0,
-    'Temperature #7': 0,
-    'Temperature #8': 0,
     'Virtual Temperature': 0,
 
     'Small Force #1': 0,
@@ -80,7 +74,7 @@ export const fullSensorData = writable({
     'Small Force #3': 0,
     'Small Force #4': 0,
     'Big Force': 0,
-    
+
     'IDL #1': 0,
     'IDL #2': 0,
     'IDL #3': 0,
@@ -102,8 +96,6 @@ export async function continousSensorUpdate(allValues) {
         data['Temperature #4'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][3]
         data['Temperature #5'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][4]
         data['Temperature #6'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][5]
-        data['Temperature #7'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][6]
-        data['Temperature #8'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][7]
         data['Virtual Temperature'] = 0
 
         data['Small Force #1'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rSmallForceLive"][0]

@@ -7,28 +7,37 @@
     } from 'svelte-modals'
     import { fly } from 'svelte/transition'
 
-    import {writeValues} from "../store/requests"
+    import { writeValues } from '../store/requests'
 
-    export let newTestObj; 
-    export let isOpen; 
+    export let newTestObj
+    export let isOpen
 
     let errorMessage = ''
 
+    let step0 = false
     let step1 = false
     let step2 = false
     let step3 = false
-    let step4 = false
 
-    function handleConfirmationClick(stepNumber) {
+    async function handleConfirmationClick(stepNumber) {
         switch (stepNumber) {
+            case 0:
+                await writeValues({
+                    'GVL_InputHMI.bInitialize': true,
+                })
+                step0 = true
+                break
             case 1:
-                step1 = !step1
+                await writeValues({
+                    'GVL_InputHMI.bDistanceSensorNulling': true,
+                })
+                step1 = true
                 break
             case 2:
-                step2 = !step2
-                break
-            case 3:
-                step3 = !step3
+                await writeValues({
+                    'GVL_InputHMI.bDistanceSensorNullingPlateRemoved': true,
+                })
+                step2 = true
                 break
 
             default:
@@ -37,10 +46,10 @@
     }
 
     async function handleStartButton() {
-        if (step1 && step2 && step3) {
+        if (step0 && step1 && step2) {
             let tcRes = await writeValues(newTestObj)
-            if (tcRes.success == true){
-                step4 = true; 
+            if (tcRes.success == true) {
+                step3 = true
             } else {
                 errorMessage = JSON.stringify(tcRes.errorMessage)
             }
@@ -63,6 +72,14 @@
             <p>Click to confirm each action</p>
             <div class="actions">
                 <div class="action">
+                    <p>Initialize system</p>
+                    <button
+                        class:pressed={step0}
+                        on:click={() => handleConfirmationClick(0)}
+                        >Initialize</button
+                    >
+                </div>
+                <div class="action">
                     <p>The nullifying plate is placed on the sensor</p>
                     <button
                         class:pressed={step1}
@@ -71,25 +88,17 @@
                     >
                 </div>
                 <div class="action">
-                    <p>Nullify the distance sensors</p>
+                    <p>The nullifying plate is removed</p>
                     <button
                         class:pressed={step2}
                         on:click={() => handleConfirmationClick(2)}
-                        >Nullify</button
-                    >
-                </div>
-                <div class="action">
-                    <p>The nullifying plate is removed</p>
-                    <button
-                        class:pressed={step3}
-                        on:click={() => handleConfirmationClick(3)}
                         >Confirm</button
                     >
                 </div>
                 <div class="action">
                     <p>Press to start the test</p>
                     <button
-                        class:pressed={step4}
+                        class:pressed={step3}
                         on:click={() => handleStartButton()}>START</button
                     >
                 </div>
