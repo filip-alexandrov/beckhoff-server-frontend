@@ -10,6 +10,7 @@ const app = express();
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cors());
 
 plcManager.connectToPlc();
 
@@ -18,7 +19,7 @@ const port = 80;
 // serve assets, images, css, fonts, etc.
 app.use("/", express.static(path.join(__dirname, "build")));
 app.use("/static", express.static(path.join(__dirname, "static")));
-app.use(cors());
+
 
 // serve website
 app.get("/", (req, res) =>

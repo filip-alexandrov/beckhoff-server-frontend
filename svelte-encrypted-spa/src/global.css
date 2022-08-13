@@ -60,10 +60,9 @@ time, mark, audio, video, button, input,  hr, a {
 body {
     color: white;
     font-family: 'Outfit', sans-serif;
-    overflow-y: hidden;
-    overflow-x: hidden; 
-    max-width: 1920px;
-}
+    overflow-y: hidden; 
+    overflow-x: hidden;
+}   
 
 /* Dont display plotly logo & take screenshot */
 a[href='https://plotly.com/']{
@@ -81,4 +80,10 @@ input::-webkit-inner-spin-button {
 }
 input[type=number] {
     -moz-appearance: textfield;
+}
+
+@media screen and (max-width: 1800px) {
+    body {
+        overflow-x: scroll;
+    }
 }
