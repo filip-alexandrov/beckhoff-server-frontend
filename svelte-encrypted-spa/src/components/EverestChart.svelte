@@ -1,6 +1,7 @@
 <script>
     import Plotly from 'plotly.js-dist-min'
     import { onMount } from 'svelte'
+    import { goto } from 'svelte-pathfinder'
     import { fade } from 'svelte/transition'
 
     import arrowSvg from '../assets/arrow.svg'
@@ -12,49 +13,35 @@
     /* import xData from './x.json'
     import yData from './y.json'
     import zData from './z.json' */
+    let dataFetched = false
+    let mounted = false
+
     let xData = []
     let yData = []
     let zData = []
 
-    var trace1 = {
-        x: xData,
-        y: yData,
-        z: zData,
+    Promise.all([
+        fetch('/static/dem/x.json'),
+        fetch('/static/dem/y.json'),
+        fetch('/static/dem/z.json'),
+    ]).then(async ([x, y, z]) => {
+        xData = await x.json()
+        yData = await y.json()
+        zData = await z.json()
 
-        type: 'surface',
-        colorscale: 'Blackbody',
-        color: 'red',
-        hovertemplate:
-            'X: </b>: %{x:.0f}m<br>' +
-            'Y: %{y:.0f}m<br>' +
-            'Elevation: </b>: %{z:.0f}m<extra></extra>',
+        dataFetched = true
+    })
 
-        showscale: false,
-    }
+    onMount(() => {
+        mounted = true
+    })
 
-    var data = [trace1]
-
-    var my_template = {
-        layout: {
-            xaxis: {
-                gridcolor: 'red',
-            },
-            yaxis: {
-                gridcolor: 'red',
-            },
-            zaxis: {
-                gridcolor: 'red',
-            },
-        },
-    }
-
-    var layout = {
+    let layout = {
         /* width: '100vw',
         height: '100vh', */
         marker: {
             colorbar: false,
         },
-        template: my_template,
         margin: {
             l: 0,
             r: 0,
@@ -141,24 +128,33 @@
         },
     }
 
-    var config = { responsive: true }
+    let config = { responsive: true }
 
-    onMount(() => {
-        Plotly.newPlot('tester', data, layout, config) /* .then((graph) => {
-            setTimeout(() => {
-                // Init new array of slices
-                let newZArray = []
+    // Plotting logic after data, browser available
+    $: if (dataFetched && mounted) {
+        let trace1 = {
+            x: xData,
+            y: yData,
+            z: zData,
 
-                // loop through all slices
-                for (let subArray of zData) {
-                    // multiply each slice element by the slider value
-                    newZArray.push(subArray.map((x) => x * sliderValue))
-                }
+            type: 'surface',
+            colorscale: 'Blackbody',
+            color: 'red',
+            hovertemplate:
+                'X: </b>: %{x:.0f}m<br>' +
+                'Y: %{y:.0f}m<br>' +
+                'Elevation: </b>: %{z:.0f}m<extra></extra>',
 
-                Plotly.restyle(graph, 'z', [newZArray])
-            }, 2000)
-        }) */
-    })
+            showscale: false,
+        }
+
+        let data = [trace1]
+
+        Plotly.newPlot('tester', data, layout, config)
+
+        // Prevent multiple runs:
+        mounted = false
+    }
 
     let sliderValue = 100
     function handleSliderChange() {
@@ -174,6 +170,7 @@
         // Update the plot with the new data
         Plotly.restyle('tester', 'z', [newZArray]) */
 
+        // TODO: Uncomment
         layout.scene.aspectmode = 'manual'
         layout.scene.aspectratio.z = sliderValue / 100
 
@@ -193,10 +190,15 @@
 
 <div id="tester">
     <div class="options">
-        <a href="/mariana" class="switch">
+        <button
+            on:click={() => {
+                goto('/mariana')
+            }}
+            class="switch"
+        >
             Switch to Mariana Trench
             <img src={arrowSvg} alt="" />
-        </a>
+        </button>
         <div class="header">Mt. Everest</div>
         <div>
             <p>Change scaling: <span>{sliderValue}%</span></p>
@@ -280,6 +282,7 @@
         align-items: center;
         cursor: pointer;
         mix-blend-mode: exclusion;
+        background-color: transparent;
     }
     .switch:hover {
         color: #fff;

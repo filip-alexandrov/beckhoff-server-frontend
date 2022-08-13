@@ -32,11 +32,11 @@
                 },
                 axis: {
                     tickcolor: '#fff',
-                    range: [0, 40],
+                    range: [0, 100],
                 },
                 steps: [
                     {
-                        range: [0, 40],
+                        range: [0, 100],
                         color: '#2B2B36',
                     },
                 ],
@@ -157,14 +157,14 @@
             />mm
         </div>
 
-        <div class="subtitle">Velocity</div>
+        <!-- <div class="subtitle">Velocity</div>
         <div class="speed">
             <input
                 type="number"
                 disabled
                 placeholder="max"
             />mm/s
-        </div>
+        </div> -->
 
         {#if $allPlcVariables['GVL_OutputHMI.bMotorFault']}
             <button on:click={handleResetMotorFault}

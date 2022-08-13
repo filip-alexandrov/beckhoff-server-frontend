@@ -61,62 +61,61 @@ export const sensorUnits = writable({
 })
 
 export const fullSensorData = writable({
-    'Temperature #1': 0,
-    'Temperature #2': 0,
-    'Temperature #3': 0,
-    'Temperature #4': 0,
-    'Temperature #5': 0,
-    'Temperature #6': 0,
-    'Virtual Temperature': 0,
+    'Temperature #1': "0",
+    'Temperature #2': "0",
+    'Temperature #3': "0",
+    'Temperature #4': "0",
+    'Temperature #5': "0",
+    'Temperature #6': "0",
+    'Virtual Temperature': "0",
 
-    'Small Force #1': 0,
-    'Small Force #2': 0,
-    'Small Force #3': 0,
-    'Small Force #4': 0,
-    'Big Force': 0,
+    'Small Force #1': "0",
+    'Small Force #2': "0",
+    'Small Force #3': "0",
+    'Small Force #4': "0",
+    'Big Force': "0",
 
-    'IDL #1': 0,
-    'IDL #2': 0,
-    'IDL #3': 0,
-    'IDL #4': 0,
-    'IDL #5': 0,
-    'IDL #6': 0,
+    'IDL #1': "0",
+    'IDL #2': "0",
+    'IDL #3': "0",
+    'IDL #4': "0",
+    'IDL #5': "0",
+    'IDL #6': "0",
 
-    Current: 0,
-    Voltage: 0,
-    'Motor Velocity': 0,
-    'Motor Position': 0,
+    Current: "0",
+    Voltage: "0",
+    'Motor Velocity': "0",
+    'Motor Position': "0",
 })
 
 export async function continousSensorUpdate(allValues) {
     fullSensorData.update((data) => {
-        data['Temperature #1'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][0]
-        data['Temperature #2'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][1]
-        data['Temperature #3'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][2]
-        data['Temperature #4'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][3]
-        data['Temperature #5'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][4]
-        data['Temperature #6'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][5]
-        data['Virtual Temperature'] = 0
+        data['Temperature #1'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][0]).toFixed(1)
+        data['Temperature #2'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][1]).toFixed(1)
+        data['Temperature #3'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][2]).toFixed(1)
+        data['Temperature #4'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][3]).toFixed(1)
+        data['Temperature #5'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][4]).toFixed(1)
+        data['Temperature #6'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][5]).toFixed(1)
+        data['Virtual Temperature'] = (0).toFixed(0)
 
-        data['Small Force #1'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rSmallForceLive"][0]
-        data['Small Force #2'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rSmallForceLive"][1]
-        data['Small Force #3'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rSmallForceLive"][2]
-        data['Small Force #4'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rSmallForceLive"][3]
-        data['Small Force #4'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rSmallForceLive"][3]
-        data['Big Force'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rBigForceLive"]
+        data['Small Force #1'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rSmallForceLive"][0]).toFixed(1)
+        data['Small Force #2'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rSmallForceLive"][1]).toFixed(1)
+        data['Small Force #3'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rSmallForceLive"][2]).toFixed(1)
+        data['Small Force #4'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rSmallForceLive"][3]).toFixed(1)
+        data['Big Force'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rBigForceLive"]).toFixed(1)
 
-        data['IDL #1'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rDistanceLive"][0]
-        data['IDL #2'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rDistanceLive"][1]
-        data['IDL #3'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rDistanceLive"][2]
-        data['IDL #4'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rDistanceLive"][3]
-        data['IDL #5'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rDistanceLive"][4]
-        data['IDL #6'] = allValues["GVL_OutputHMI.ST_SensorOutputs"]["rDistanceLive"][5]
+        data['IDL #1'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rDistanceLive"][0]).toFixed(1)
+        data['IDL #2'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rDistanceLive"][1]).toFixed(1)
+        data['IDL #3'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rDistanceLive"][2]).toFixed(1)
+        data['IDL #4'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rDistanceLive"][3]).toFixed(1)
+        data['IDL #5'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rDistanceLive"][4]).toFixed(1)
+        data['IDL #6'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rDistanceLive"][5]).toFixed(1)
 
-        data['Current'] = allValues["GVL_OutputHMI.rCurrentLive"]
-        data['Voltage'] = allValues["GVL_OutputHMI.rVoltageLive"]
+        data['Current'] = (allValues["GVL_OutputHMI.rCurrentLive"]).toFixed(1)
+        data['Voltage'] = (allValues["GVL_OutputHMI.rVoltageLive"]).toFixed(1)
 
-        data['Motor Velocity'] = allValues["GVL_OutputHMI.rMotorVelocity"]
-        data['Motor Position'] = allValues["GVL_OutputHMI.rMotorPosition"]
+        data['Motor Velocity'] = (allValues["GVL_OutputHMI.rMotorVelocity"] / 1000).toFixed(2)
+        data['Motor Position'] = (allValues["GVL_OutputHMI.rMotorPosition"]).toFixed(1)
 
         return data
     })

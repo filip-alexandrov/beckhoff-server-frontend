@@ -1,6 +1,7 @@
 <script lang="ts">
     import Plotly from 'plotly.js-dist-min'
     import { onMount } from 'svelte'
+    import { goto } from 'svelte-pathfinder'
     import { fade } from 'svelte/transition'
 
     import arrowSvg from '../assets/arrow.svg'
@@ -32,28 +33,12 @@
         mounted = true
     })
 
-    // Define static plot logic
-    let my_template = {
-        layout: {
-            xaxis: {
-                gridcolor: 'red',
-            },
-            yaxis: {
-                gridcolor: 'red',
-            },
-            zaxis: {
-                gridcolor: 'red',
-            },
-        },
-    }
-
     let layout = {
         /* width: '100vw',
         height: '100vh', */
         marker: {
             colorbar: false,
         },
-        template: my_template,
         margin: {
             l: 0,
             r: 0,
@@ -202,10 +187,15 @@
 
 <div id="tester">
     <div class="options">
-        <a href="/everest" class="switch">
+        <button
+            on:click={() => {
+                goto('/everest')
+            }}
+            class="switch"
+        >
             Switch to Mt. Everest
             <img src={arrowSvg} alt="" />
-        </a>
+        </button>
         <div class="header">Mariana Trench</div>
         <div>
             <p>Change scaling: <span>{sliderValue}%</span></p>
@@ -289,6 +279,7 @@
         align-items: center;
         cursor: pointer;
         mix-blend-mode: exclusion;
+        background-color: transparent;
     }
     .switch:hover {
         color: #fff;

@@ -22,6 +22,9 @@
     async function handleConfirmationClick(stepNumber) {
         switch (stepNumber) {
             case 0:
+                // should write future test parameters before init
+                await writeValues(newTestObj)
+
                 await writeValues({
                     'GVL_InputHMI.bInitialize': true,
                 })
@@ -47,7 +50,11 @@
 
     async function handleStartButton() {
         if (step0 && step1 && step2) {
-            let tcRes = await writeValues(newTestObj)
+            // Only starts the test, since params are written in init
+            let tcRes = await writeValues({
+                'GVL_InputHMI.bStartButton': true,
+            })
+
             if (tcRes.success == true) {
                 step3 = true
             } else {
@@ -72,7 +79,7 @@
             <p>Click to confirm each action</p>
             <div class="actions">
                 <div class="action">
-                    <p>Initialize system</p>
+                    <p>Initialize system and test parameters</p>
                     <button
                         class:pressed={step0}
                         on:click={() => handleConfirmationClick(0)}

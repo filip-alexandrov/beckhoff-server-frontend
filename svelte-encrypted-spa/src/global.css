@@ -2,16 +2,16 @@
 @tailwind components;
 @tailwind utilities; */
 
-/* @font-face {
-    src: url('./assets/Outfit-Regular.ttf');
+@font-face {
+    src: url('/static/Outfit-Regular.ttf');
     font-family: 'Outfit';
     font-weight: 400;
 }
 @font-face {
-    src: url('./assets/Outfit-Medium.ttf');
+    src: url('/static/Outfit-Medium.ttf');
     font-family: 'Outfit';
     font-weight: 500;
-} */
+}
 
 /* reset user-agent styles */
 * {
@@ -51,7 +51,7 @@ time, mark, audio, video, button, input,  hr, a {
 	padding: 0;
 	border: none;
 	font-size: 100%;
-	font: inherit;
+    font: inherit;
     color: inherit; 
 	vertical-align: baseline;
     text-decoration: none;
@@ -61,6 +61,7 @@ body {
     color: white;
     font-family: 'Outfit', sans-serif;
     overflow-y: hidden;
+    overflow-x: hidden; 
     max-width: 1920px;
 }
 

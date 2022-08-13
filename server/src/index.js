@@ -3,6 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require("path");
+const { application } = require("express");
 
 const app = express();
 
@@ -23,6 +24,11 @@ app.use(cors());
 app.get("/", (req, res) =>
   res.sendFile(path.join(__dirname, "build", "index.html"))
 );
+
+// Sent back database json file
+app.get("/api/database", async (req, res) => {
+  res.sendFile(path.join(__dirname, "database.json"));
+});
 
 // api endpoint for connecting to system
 app.post("/api/connectToPlc", async (req, res) => {

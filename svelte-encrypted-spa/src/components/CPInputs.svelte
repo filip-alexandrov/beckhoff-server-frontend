@@ -11,7 +11,6 @@
     let newTestObj = {
         'GVL_InputHMI.e_OperationMode': 'A1',
         'GVL_InputHMI.bEmergencyStop': false,
-        'GVL_InputHMI.bStartButton': true,
 
         'GVL_InputHMI.rMinAirgap': null,
         'GVL_InputHMI.rMaxAirgap': null,

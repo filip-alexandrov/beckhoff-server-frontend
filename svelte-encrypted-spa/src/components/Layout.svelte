@@ -32,7 +32,7 @@
 
     .grid-container {
         height: 100vh;
-        width: 1920px;
+        width: 100vw;
 
         display: grid;
         grid-template-columns: 221px auto;
