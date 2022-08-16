@@ -35,10 +35,14 @@ declare global {
     var orientus: {
         'Orientus #1': Array<number>
     }
+}
 
+declare namespace svelte.JSX {
+    interface HTMLAttributes<T> {
+        onclick_outside: () => void
+    }
 }
 
 /* interface Window {
     TAME: any
 } */
-

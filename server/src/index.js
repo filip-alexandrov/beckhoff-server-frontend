@@ -3,9 +3,17 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require("path");
-const { application } = require("express");
+
+const { Server } = require("socket.io");
+const http = require("http");
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -19,7 +27,6 @@ const port = 80;
 // serve assets, images, css, fonts, etc.
 app.use("/", express.static(path.join(__dirname, "build")));
 app.use("/static", express.static(path.join(__dirname, "static")));
-
 
 // serve website
 app.get("/", (req, res) =>
@@ -68,6 +75,6 @@ app.post("/api", async (req, res) => {
   res.json(tcResp);
 });
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log("Example app listening on port " + port);
 });

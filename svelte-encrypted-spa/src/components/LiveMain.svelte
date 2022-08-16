@@ -22,7 +22,7 @@ import GaugesList from './GaugesList.svelte'
 <style>
     
     .main {
-        width: 100%;
+        width: 100%; 
         height: 100%;
         display: flex;
         justify-content: center;
@@ -37,7 +37,7 @@ import GaugesList from './GaugesList.svelte'
         display: grid;
 
         grid-template-columns: 50% 50%;
-        grid-template-rows: 360px 360px auto;
+        grid-template-rows: 40% 40% auto;
         box-sizing: border-box;
         font-family: 'Outfit' sans-serif;
     }
