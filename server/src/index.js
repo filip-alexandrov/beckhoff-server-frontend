@@ -25,37 +25,39 @@ plcManager.connectToPlc();
 const port = 80;
 
 // Sockets real time sensor communication
-function sendData(target, value, timestamp) {
+function sendData(timestamps, values) {
+  // arrays of timestamps and values
+
   io.emit("data", {
-    target,
-    value,
-    timestamp,
+    timestamps,
+    values,
   });
 }
 
-async function subscribeToVariable(data){
+async function subscribeToVariable(data) {
   let readObj = await plcManager.subscribeToVariable(sendData, data.variable);
 
   io.emit("subscription:status", {
     success: readObj.success,
-    isSubscribed: readObj.success
+    isSubscribed: readObj.success,
   });
 }
 
-async function unsubscribeToVariable(data){
-  let readObj = {}
-  try{
+async function unsubscribeToVariable(data) {
+  console.log("Unsubscribing from socket");
+  let readObj = {};
+  try {
     readObj = await plcManager.unsubscrbe();
-  } catch(err){
-    // if plcManager has already unsubscribed due to 10 min timeout, 
+  } catch (err) {
+    // if plcManager has already unsubscribed due to 10 min timeout,
     // or not being subscribed to begin with
-    console.log("Already unsubscribed");	
-    readObj.success = true; 
+    console.log("Already unsubscribed");
+    readObj.success = true;
   }
 
   io.emit("subscription:status", {
     success: readObj.success,
-    isSubscribed: !readObj.success
+    isSubscribed: !readObj.success,
   });
 }
 

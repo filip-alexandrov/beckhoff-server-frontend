@@ -25,7 +25,10 @@ let plcManager = {
 
   database: [],
 
-  subscription: null,
+  subscription: null, // object holding .unsubscribe method
+
+  slidingWindowsValues: [], // hoding sensor values from the last 0.5 secs
+  slidingWindowsTimestamps: [], // hoding all timestamps from the last 0.5 secs
 
   async loadDatabase() {
     logger("twincat", "loadDatabase", "info", "Loading database");
@@ -225,7 +228,6 @@ let plcManager = {
       })
       .catch((err) => {
         console.log("Error when reading all values");
-        
 
         readObj.success = false;
         readObj.errorMessage = err;
@@ -271,12 +273,27 @@ let plcManager = {
   async subscribeToVariable(callback, variable) {
     // ex. variable: MAIN.counter
     let readObj = {};
+    let intervalStartTime = new Date();
 
     this.subscription = await this.client
       .subscribe(
         variable,
         (data, sub) => {
-          callback(sub.target, data.value, data.timestamp);
+          this.slidingWindowsTimestamps.push(data.timeStamp);
+          this.slidingWindowsValues.push(data.value);
+
+          // send data every 0.5 seconds
+          if (new Date() - intervalStartTime > 10000) {
+            console.log("Sending data to client");
+
+            intervalStartTime = new Date();
+
+            callback(this.slidingWindowsTimestamps, this.slidingWindowsValues);
+
+            // Empty the windows
+            this.slidingWindowsTimestamps = [];
+            this.slidingWindowsValues = [];
+          }
         },
         1
       )

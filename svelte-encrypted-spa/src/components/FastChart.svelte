@@ -16,27 +16,22 @@
     export let clickedSensor: string
     export let isVisible = false
 
-    // Socket.io setup 
-    let received = '';
-	let status = '';
+    // Socket.io setup
+    let received = ''
+    let status = ''
 
-	// connect
-	const socket = io('http://localhost');
+    // connect
+    const socket = io('http://localhost')
 
-	// set variable to follow
-	socket.emit('subscribe:variable', {
-		variable: 'MAIN.counter'
-	});
+    // set variable to follow
+    socket.emit('subscribe:variable', {
+        variable: 'MAIN.counter',
+    })
 
-	// check if connected to runtime
-	socket.on('subscription:status', (data) => {
-		status = data.success;
-	});
-
-    // receive data from runtime
-	socket.on('data', (data) => {
-		received = data.value;
-	});
+    // check if connected to runtime
+    socket.on('subscription:status', (data) => {
+        status = data.success
+    })
 
     const dispatch = createEventDispatcher()
 
@@ -45,8 +40,6 @@
     }
 
     onMount(() => {
-        
-
         function rand() {
             return Math.random()
         }
@@ -55,8 +48,8 @@
 
         var data = [
             {
-                x: [time],
-                y: [rand()],
+                x: [null],
+                y: [null],
                 mode: 'lines',
                 marker: { color: '#DFE300' },
             },
@@ -88,20 +81,24 @@
 
         Plotly.newPlot('myDiv', data, layout)
 
-        var cnt = 0
+        // receive data from runtime
+        socket.on('data', (data) => {
+            console.log("Socket received data")
 
-        var interval = setInterval(function () {
-            let time = new Date()
+            console.log(data.timestamps)
+            console.log(data.values)
 
             let update = {
-                x: [[time]],
-                y: [[cnt]],
+                x: [data.timestamps],
+                y: [data.values],
             }
 
-            var olderTime = time.setMinutes(time.getMinutes() - 1)
-            var futureTime = time.setMinutes(time.getMinutes() + 1)
+            // 1 minute chart range
+            let olderTime = time.setMinutes(time.getMinutes() - 1)
+            let futureTime = time.setMinutes(time.getMinutes() + 1)
 
-            var minuteView = {
+            // update chart specific viewport to fit 1 min
+            let minuteView = {
                 xaxis: {
                     type: 'date',
                     range: [olderTime, futureTime],
@@ -111,9 +108,12 @@
             Plotly.relayout('myDiv', minuteView)
 
             Plotly.extendTraces('myDiv', update, [0])
+        })
+    })
 
-            if (++cnt === 100) clearInterval(interval)
-        }, 1)
+    onDestroy(() => {
+        socket.emit("disconnect:system"); 
+        socket.disconnect(); 
     })
 </script>
 
