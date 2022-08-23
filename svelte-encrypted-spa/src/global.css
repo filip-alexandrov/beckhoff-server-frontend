@@ -68,10 +68,11 @@ body {
 a[href='https://plotly.com/']{
     display: none; 
 }
-.modebar-group{
+/* .modebar-group{
     display: none !important;
 }
-
+ */
+ 
 /* hide arrows on number inputs */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

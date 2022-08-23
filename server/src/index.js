@@ -43,7 +43,15 @@ async function subscribeToVariable(data){
 }
 
 async function unsubscribeToVariable(data){
-  let readObj = await plcManager.unsubscrbe();
+  let readObj = {}
+  try{
+    readObj = await plcManager.unsubscrbe();
+  } catch(err){
+    // if plcManager has already unsubscribed due to 10 min timeout, 
+    // or not being subscribed to begin with
+    console.log("Already unsubscribed");	
+    readObj.success = true; 
+  }
 
   io.emit("subscription:status", {
     success: readObj.success,

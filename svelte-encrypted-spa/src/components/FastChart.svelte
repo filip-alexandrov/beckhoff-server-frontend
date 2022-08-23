@@ -7,9 +7,36 @@
 </script>
 
 <script lang="ts">
-    import { createEventDispatcher, onMount } from 'svelte'
+    import { createEventDispatcher, onMount, onDestroy } from 'svelte'
     import { clickOutside } from '../helpers/clickOutside.js'
     import Plotly from 'plotly.js-dist-min'
+    import { sensorUnits } from '../store/sensors'
+    import { io } from 'socket.io-client'
+
+    export let clickedSensor: string
+    export let isVisible = false
+
+    // Socket.io setup 
+    let received = '';
+	let status = '';
+
+	// connect
+	const socket = io('http://localhost');
+
+	// set variable to follow
+	socket.emit('subscribe:variable', {
+		variable: 'MAIN.counter'
+	});
+
+	// check if connected to runtime
+	socket.on('subscription:status', (data) => {
+		status = data.success;
+	});
+
+    // receive data from runtime
+	socket.on('data', (data) => {
+		received = data.value;
+	});
 
     const dispatch = createEventDispatcher()
 
@@ -17,10 +44,9 @@
         dispatch('click-outside')
     }
 
-    export let clickedSensor: string
-    export let isVisible = false
-
     onMount(() => {
+        
+
         function rand() {
             return Math.random()
         }
@@ -32,37 +58,32 @@
                 x: [time],
                 y: [rand()],
                 mode: 'lines',
-                line: { color: '#80CAF6' },
+                marker: { color: '#DFE300' },
             },
         ]
 
         let layout = {
-            title: "Live feed", 
+            title: 'Live Feed',
             paper_bgcolor: '#212121',
             plot_bgcolor: '#212121',
-            font:{
-                color: '#fff'
+            font: {
+                color: '#fff',
+                family: 'Outfit',
             },
             yaxis: {
                 color: '#fff',
                 zerolinecolor: '#fff',
 
-                zeroline: true, 
+                zeroline: true,
                 showline: true,
             },
-            /* xaxis: {
-                color: '#fff',
-                gridcolor: '#fff', 
-                showgrid: true, 
-                zerolinecolor: '#fff',
-
-                zeroline: true, 
-                showline: true,
-                showticklabels: true,
-                tickcolor: '#fff',
-            }, */
-           
-            
+            hoverlabel: {
+                bgcolor: '#212121',
+                font: {
+                    color: '#fff',
+                    family: 'Outfit',
+                },
+            },
         }
 
         Plotly.newPlot('myDiv', data, layout)
@@ -77,6 +98,18 @@
                 y: [[cnt]],
             }
 
+            var olderTime = time.setMinutes(time.getMinutes() - 1)
+            var futureTime = time.setMinutes(time.getMinutes() + 1)
+
+            var minuteView = {
+                xaxis: {
+                    type: 'date',
+                    range: [olderTime, futureTime],
+                },
+            }
+
+            Plotly.relayout('myDiv', minuteView)
+
             Plotly.extendTraces('myDiv', update, [0])
 
             if (++cnt === 100) clearInterval(interval)
@@ -90,13 +123,11 @@
     use:clickOutside
     on:click_outside={handleClickOutisde}
 >
-    {clickedSensor}
-    <div id="myDiv" />
+    <div id="myDiv"><div class="sensor-name">{clickedSensor}</div></div>
 </div>
 
 <style>
     .full-screen {
-        background-color: aqua;
         position: absolute;
 
         width: 1000px;
@@ -114,5 +145,10 @@
     #myDiv {
         width: 100%;
         height: 100%;
+    }
+    .sensor-name {
+        color: #fff;
+        position: relative;
+        font-size: 200px;
     }
 </style>

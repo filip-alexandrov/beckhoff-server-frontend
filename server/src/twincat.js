@@ -269,6 +269,7 @@ let plcManager = {
 
   // subscribe to runtime variable changes
   async subscribeToVariable(callback, variable) {
+    // ex. variable: MAIN.counter
     let readObj = {};
 
     this.subscription = await this.client
