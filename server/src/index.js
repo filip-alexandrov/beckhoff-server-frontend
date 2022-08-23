@@ -24,6 +24,41 @@ plcManager.connectToPlc();
 
 const port = 80;
 
+// Sockets real time sensor communication
+function sendData(target, value, timestamp) {
+  io.emit("data", {
+    target,
+    value,
+    timestamp,
+  });
+}
+
+async function subscribeToVariable(data){
+  let readObj = await plcManager.subscribeToVariable(sendData, data.variable);
+
+  io.emit("subscription:status", {
+    success: readObj.success,
+    isSubscribed: readObj.success
+  });
+}
+
+async function unsubscribeToVariable(data){
+  let readObj = await plcManager.unsubscrbe();
+
+  io.emit("subscription:status", {
+    success: readObj.success,
+    isSubscribed: !readObj.success
+  });
+}
+
+io.on("connection", function (socket) {
+  console.log("Connected succesfully to the socket ...");
+
+  socket.on("subscribe:variable", subscribeToVariable);
+
+  socket.on("disconnect:system", unsubscribeToVariable);
+});
+
 // serve assets, images, css, fonts, etc.
 app.use("/", express.static(path.join(__dirname, "build")));
 app.use("/static", express.static(path.join(__dirname, "static")));

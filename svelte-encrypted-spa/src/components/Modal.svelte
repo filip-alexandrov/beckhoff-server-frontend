@@ -112,7 +112,7 @@
             </div>
             <p>{errorMessage}</p>
             <button class="close" on:click={closeModal}
-                >Close configuration</button
+                >Close configurator</button
             >
         </div>
     </div>

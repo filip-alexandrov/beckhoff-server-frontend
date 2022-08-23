@@ -12,9 +12,9 @@
         let forceZ = []; 
 
         for(let element of db) {
-            distanceX.push(element.D);
-            currentY.push(element.I);
-            forceZ.push(element.F);
+            distanceX.push(Math.abs(element.D));
+            currentY.push(Math.abs(element.I));
+            forceZ.push(Math.abs(element.F));
         }
 
         var trace1 = {

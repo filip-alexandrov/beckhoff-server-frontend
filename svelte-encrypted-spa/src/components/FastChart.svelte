@@ -36,21 +36,50 @@
             },
         ]
 
-        Plotly.newPlot('myDiv', data)
+        let layout = {
+            title: "Live feed", 
+            paper_bgcolor: '#212121',
+            plot_bgcolor: '#212121',
+            font:{
+                color: '#fff'
+            },
+            yaxis: {
+                color: '#fff',
+                zerolinecolor: '#fff',
+
+                zeroline: true, 
+                showline: true,
+            },
+            /* xaxis: {
+                color: '#fff',
+                gridcolor: '#fff', 
+                showgrid: true, 
+                zerolinecolor: '#fff',
+
+                zeroline: true, 
+                showline: true,
+                showticklabels: true,
+                tickcolor: '#fff',
+            }, */
+           
+            
+        }
+
+        Plotly.newPlot('myDiv', data, layout)
 
         var cnt = 0
 
         var interval = setInterval(function () {
-            var time = new Date()
+            let time = new Date()
 
-            var update = {
+            let update = {
                 x: [[time]],
-                y: [[rand()]],
+                y: [[cnt]],
             }
 
             Plotly.extendTraces('myDiv', update, [0])
 
-            /* if (++cnt === 100) clearInterval(interval) */
+            if (++cnt === 100) clearInterval(interval)
         }, 1)
     })
 </script>

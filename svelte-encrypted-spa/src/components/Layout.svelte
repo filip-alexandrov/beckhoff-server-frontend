@@ -7,18 +7,20 @@
     import NavOrientation from './NavOther.svelte'
     import FastChart from '../components/FastChart.svelte'
 
+    import { fly } from 'svelte/transition'
+
     let clickedSensor = ''
-    let chartVisible = false; 
+    let chartVisible = false
 
     $: console.log(clickedSensor)
 
     function handleSensorClick(event) {
-        clickedSensor = event.detail.sensor; 
+        clickedSensor = event.detail.sensor
         chartVisible = true
     }
 
     function handleClickOutside() {
-        clickedSensor = ""
+        clickedSensor = ''
         chartVisible = false
     }
 </script>
@@ -27,7 +29,13 @@
     <div class="grid-container">
         <div class="main">
             <slot />
-            <FastChart {clickedSensor} isVisible={chartVisible} on:click-outside={handleClickOutside} />
+            {#if clickedSensor != ''}
+                <FastChart
+                    {clickedSensor}
+                    isVisible={chartVisible}
+                    on:click-outside={handleClickOutside}
+                />
+            {/if}
         </div>
         <div>
             <NavHeader />
@@ -37,7 +45,7 @@
         </div>
 
         <div class="right-nav">
-            <NavTemp {clickedSensor} on:sensor-click={handleSensorClick}/>
+            <NavTemp {clickedSensor} on:sensor-click={handleSensorClick} />
             <NavWeight />
             <NavDistance />
             <NavOrientation />
@@ -46,7 +54,6 @@
 </div>
 
 <style>
-
     .grid-container {
         height: 100vh;
 
@@ -63,12 +70,12 @@
     }
     .main {
         grid-area: 2 / 2 / span 1 / span 1;
-        position: relative; 
-        z-index: 1; 
+        position: relative;
+        z-index: 1;
     }
     .right-nav {
         background-color: #323232;
-        position: relative; 
+        position: relative;
         z-index: 2;
     }
 </style>

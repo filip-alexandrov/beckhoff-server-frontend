@@ -96,7 +96,7 @@ export async function continousSensorUpdate(allValues) {
         data['Temperature #4'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][3]).toFixed(1)
         data['Temperature #5'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][4]).toFixed(1)
         data['Temperature #6'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][5]).toFixed(1)
-        data['Virtual Temperature'] = (0).toFixed(0)
+        data['Virtual Temperature'] = (allValues["GVL_OutputHMI.rVirtualTemperature"]).toFixed(1)
 
         data['Small Force #1'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rSmallForceLive"][0]).toFixed(1)
         data['Small Force #2'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rSmallForceLive"][1]).toFixed(1)

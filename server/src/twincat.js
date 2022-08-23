@@ -25,6 +25,8 @@ let plcManager = {
 
   database: [],
 
+  subscription: null,
+
   async loadDatabase() {
     logger("twincat", "loadDatabase", "info", "Loading database");
 
@@ -56,7 +58,7 @@ let plcManager = {
 
         readObj.success = true;
       })
-      .catch((err) => {
+      .catch(async (err) => {
         logger("twincat", "connectToPlc", "error", err);
 
         readObj.success = false;
@@ -105,7 +107,7 @@ let plcManager = {
       })
       .catch((err) => {
         logger("twincat", "getPlcStatus", "error", err);
-        console.log(err);
+        console.log("getPlcStatus error");
 
         readObj.success = false;
         readObj.errorMessage = err;
@@ -158,7 +160,10 @@ let plcManager = {
               I: currentI,
             });
 
-            fs.writeFileSync(path.join(__dirname, "database.json"), JSON.stringify(this.database));
+            fs.writeFileSync(
+              path.join(__dirname, "database.json"),
+              JSON.stringify(this.database)
+            );
           }
         })
         .catch((err) => {
@@ -188,6 +193,7 @@ let plcManager = {
       this.client.readSymbol("GVL_OutputHMI.tElapsedTime"),
       this.client.readSymbol("GVL_OutputHMI.uiMeasurementsFinished"),
       this.client.readSymbol("GVL_OutputHMI.uiOverallMeasurements"),
+      this.client.readSymbol("GVL_OutputHMI.rVirtualTemperature"),
 
       this.client.readSymbol("GVL_InputHMI.e_OperationMode"),
       this.client.readSymbol("GVL_InputHMI.rMinCurrent"),
@@ -210,7 +216,7 @@ let plcManager = {
       this.client.readSymbol("GVL_InputHMI.bDistanceSensorNullingPlateRemoved"),
     ])
       .then((response) => {
-        console.log("All values were read")
+        console.log("All values were read");
         readObj.success = true;
 
         for (let element of response) {
@@ -219,6 +225,7 @@ let plcManager = {
       })
       .catch((err) => {
         console.log("Error when reading all values");
+        
 
         readObj.success = false;
         readObj.errorMessage = err;
@@ -259,6 +266,59 @@ let plcManager = {
 
     return readObj;
   },
+
+  // subscribe to runtime variable changes
+  async subscribeToVariable(callback, variable) {
+    let readObj = {};
+
+    this.subscription = await this.client
+      .subscribe(
+        variable,
+        (data, sub) => {
+          callback(sub.target, data.value, data.timestamp);
+        },
+        1
+      )
+      .then(() => {
+        readObj.success = true;
+
+        // Auto unsubscribe after 10 minutes, to prevent memory leaks
+        setTimeout(async () => {
+          try {
+            await this.subscription.unsubscribe();
+          } catch {
+            console.log("Already no active subscriptions");
+          }
+        }, 10 * 60 * 1000);
+      })
+      .catch((err) => {
+        readObj.success = false;
+        readObj.errorMessage = err;
+      });
+
+    console.log(`Subscribed status: ${readObj.success}`);
+    return readObj;
+  },
+
+  async unsubscrbe() {
+    let readObj = {};
+
+    await this.subscription
+      .unsubscrbe()
+      .then(() => {
+        console.log("Unsubscribed");
+
+        readObj.success = true;
+      })
+      .catch((err) => {
+        console.log(err);
+
+        readObj.success = false;
+        readObj.errorMessage = err;
+      });
+
+    return readObj;
+  },
 };
 
 async function main() {
@@ -282,15 +342,19 @@ async function main() {
   let resp = await plcManager.writeManualMotor(false, 0, 0);
   await plcManager.disconnectPlc();  */
 
-  await plcManager.loadDatabase();
-  await plcManager.connectToPlc();
-  await plcManager.getPlcStatus();
-  let resp = await plcManager.readAllValues();
-  plcManager.startWritingToDatabase();
+  const log = (...args) => {
+    console.log(...args);
+  };
 
-  console.log(JSON.stringify(resp));
+  // await plcManager.loadDatabase();
+  await plcManager.connectToPlc();
+  // await plcManager.getPlcStatus();
+  // await plcManager.readAllValues();
+  // plcManager.startWritingToDatabase();
+
+  plcManager.subscribeToVariable(log);
 }
 
-// main(); //  causes run in the same port
+main(); //  causes run in the same port
 
 module.exports = { plcManager };

@@ -23,6 +23,7 @@
         background-color: #323232;
         padding: 20px;
         overflow: auto;
+        z-index: 2;
     }
 
     .holder::-webkit-scrollbar {
@@ -45,4 +46,12 @@
     .distancer {
         margin-bottom: 50px;
     }
+    @media screen and (min-width: 1800px) {
+        .holder {
+            left: auto; 
+            right: 0px; 
+        }
+    }
+        
+    
 </style>
