@@ -10,8 +10,10 @@
     import { createEventDispatcher, onMount, onDestroy } from 'svelte'
     import { clickOutside } from '../helpers/clickOutside.js'
     import Plotly from 'plotly.js-dist-min'
-    import { sensorUnits } from '../store/sensors'
+    import { sensorUnits, otherSensorMappings } from '../store/sensors'
     import { io } from 'socket.io-client'
+
+    import { values, timestamps } from '../assets/massiveObj'
 
     export let clickedSensor: string
     export let isVisible = false
@@ -25,7 +27,7 @@
 
     // set variable to follow
     socket.emit('subscribe:variable', {
-        variable: 'MAIN.counter',
+        variable: otherSensorMappings[clickedSensor],
     })
 
     // check if connected to runtime
@@ -40,13 +42,7 @@
     }
 
     onMount(() => {
-        function rand() {
-            return Math.random()
-        }
-
-        var time = new Date()
-
-        var data = [
+        let data = [
             {
                 x: [null],
                 y: [null],
@@ -83,15 +79,14 @@
 
         // receive data from runtime
         socket.on('data', (data) => {
-            console.log("Socket received data")
-
-            console.log(data.timestamps)
-            console.log(data.values)
+            let timestamps = data.timestamps.map((date) => new Date(date))
 
             let update = {
-                x: [data.timestamps],
+                x: [timestamps],
                 y: [data.values],
             }
+
+            let time = new Date()
 
             // 1 minute chart range
             let olderTime = time.setMinutes(time.getMinutes() - 1)
@@ -112,8 +107,8 @@
     })
 
     onDestroy(() => {
-        socket.emit("disconnect:system"); 
-        socket.disconnect(); 
+        socket.emit('disconnect:system')
+        socket.disconnect()
     })
 </script>
 
@@ -123,7 +118,15 @@
     use:clickOutside
     on:click_outside={handleClickOutisde}
 >
-    <div id="myDiv"><div class="sensor-name">{clickedSensor}</div></div>
+    <div
+        class="sensor-name"
+        on:click={() => {
+            socket.disconnect()
+        }}
+    >
+        Disconnect & Stop
+    </div>
+    <div id="myDiv" />
 </div>
 
 <style>
@@ -148,7 +151,11 @@
     }
     .sensor-name {
         color: #fff;
-        position: relative;
-        font-size: 200px;
+        position: absolute;
+        font-size: 20px;
+        z-index: 1;
+        top: 10px;
+        left: 10px;
+        cursor: pointer;
     }
 </style>

@@ -48,7 +48,7 @@
             <NavTemp {clickedSensor} on:sensor-click={handleSensorClick} />
             <NavWeight />
             <NavDistance />
-            <NavOrientation />
+            <NavOrientation {clickedSensor} on:sensor-click={handleSensorClick} />
         </div>
     </div>
 </div>

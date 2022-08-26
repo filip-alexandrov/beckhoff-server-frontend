@@ -88,6 +88,13 @@ export const fullSensorData = writable({
     'Motor Position': "0",
 })
 
+export const otherSensorMappings = {
+    Current: "GVL_OutputHMI.rCurrentLive",
+    Voltage: "GVL_OutputHMI.rVoltageLive",
+    'Motor Velocity': "GVL_OutputHMI.rMotorVelocity",
+    'Motor Position': "GVL_OutputHMI.rMotorPosition",
+}
+
 export async function continousSensorUpdate(allValues) {
     fullSensorData.update((data) => {
         data['Temperature #1'] = (allValues["GVL_OutputHMI.ST_SensorOutputs"]["rTemperatureLive"][0]).toFixed(1)

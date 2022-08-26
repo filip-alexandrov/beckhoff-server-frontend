@@ -1,4 +1,4 @@
-let values = [
+export let values = [
     110753,
     110754,
     110754,
@@ -1118,7 +1118,7 @@ let values = [
     111125
 ]
 
-let timestamps = [
+export let timestamps = [
     "2022-08-23T13:17:30.096Z",
     "2022-08-23T13:17:30.106Z",
     "2022-08-23T13:17:30.106Z",

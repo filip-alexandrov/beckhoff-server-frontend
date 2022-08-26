@@ -278,13 +278,15 @@ let plcManager = {
     this.subscription = await this.client
       .subscribe(
         variable,
-        (data, sub) => {
+        (data, sub) => { 
+
           this.slidingWindowsTimestamps.push(data.timeStamp);
           this.slidingWindowsValues.push(data.value);
 
           // send data every 0.5 seconds
-          if (new Date() - intervalStartTime > 10000) {
+          if (new Date() - intervalStartTime > 1000) {
             console.log("Sending data to client");
+            console.log(this.slidingWindowsValues);
 
             intervalStartTime = new Date();
 
@@ -297,32 +299,30 @@ let plcManager = {
         },
         1
       )
-      .then(() => {
-        readObj.success = true;
-
-        // Auto unsubscribe after 10 minutes, to prevent memory leaks
-        setTimeout(async () => {
-          try {
-            await this.subscription.unsubscribe();
-          } catch {
-            console.log("Already no active subscriptions");
-          }
-        }, 10 * 60 * 1000);
-      })
       .catch((err) => {
         readObj.success = false;
         readObj.errorMessage = err;
+        return; 
       });
+
+      // Auto unsubscribe after 10 minutes, to prevent memory leaks
+      setTimeout(async () => {
+        try {
+          await this.subscription.unsubscribe();
+        } catch {
+          console.log("Already no active subscriptions");
+        }
+      }, 0.5 * 60 * 1000);
 
     console.log(`Subscribed status: ${readObj.success}`);
     return readObj;
   },
 
-  async unsubscrbe() {
+  async unsubscribe() {
     let readObj = {};
 
     await this.subscription
-      .unsubscrbe()
+      .unsubscribe()
       .then(() => {
         console.log("Unsubscribed");
 

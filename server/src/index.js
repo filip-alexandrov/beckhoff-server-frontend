@@ -47,7 +47,7 @@ async function unsubscribeToVariable(data) {
   console.log("Unsubscribing from socket");
   let readObj = {};
   try {
-    readObj = await plcManager.unsubscrbe();
+    readObj = await plcManager.unsubscribe();
   } catch (err) {
     // if plcManager has already unsubscribed due to 10 min timeout,
     // or not being subscribed to begin with
