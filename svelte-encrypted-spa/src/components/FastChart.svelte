@@ -88,9 +88,9 @@
 
             let time = new Date()
 
-            // 1 minute chart range
-            let olderTime = time.setMinutes(time.getMinutes() - 1)
-            let futureTime = time.setMinutes(time.getMinutes() + 1)
+            // 1 second chart range
+            let olderTime = time.setSeconds(time.getSeconds() - 1)
+            let futureTime = time.setSeconds(time.getSeconds() + 1)
 
             // update chart specific viewport to fit 1 min
             let minuteView = {
