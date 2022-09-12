@@ -1,5 +1,10 @@
 import { writable } from 'svelte/store'
 
+export const opModes = [
+    "A1", 
+    "A2"
+]
+
 export const temperatureSensors = [
     'Temperature #1',
     'Temperature #2',
@@ -93,6 +98,11 @@ export const otherSensorMappings = {
     Voltage: "GVL_OutputHMI.rVoltageLive",
     'Motor Velocity': "GVL_OutputHMI.rMotorVelocity",
     'Motor Position': "GVL_OutputHMI.rMotorPosition",
+    'Big Force': "GVL_OutputHMI.ST_SensorOutputs.rBigForceLive",
+    'Small Force #1': "GVL_OutputHMI.ST_SensorOutputs.rSmallForceLive[0]",
+    'Small Force #2': "GVL_OutputHMI.ST_SensorOutputs.rSmallForceLive[1]",
+    'Small Force #3': "GVL_OutputHMI.ST_SensorOutputs.rSmallForceLive[2]",
+    'Small Force #4': "GVL_OutputHMI.ST_SensorOutputs.rSmallForceLive[3]",
 }
 
 export async function continousSensorUpdate(allValues) {

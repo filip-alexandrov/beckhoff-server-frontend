@@ -15,6 +15,8 @@
 
     import { values, timestamps } from '../assets/massiveObj'
 
+    import pause from '../assets/pause.svg'
+
     export let clickedSensor: string
     export let isVisible = false
 
@@ -110,6 +112,8 @@
         socket.emit('disconnect:system')
         socket.disconnect()
     })
+
+    let isPaused = false
 </script>
 
 <div
@@ -122,9 +126,12 @@
         class="sensor-name"
         on:click={() => {
             socket.disconnect()
+            isPaused = true
         }}
     >
-        Disconnect & Stop
+        <img src={pause} alt="" />{isPaused
+            ? 'Disconnected'
+            : ' Disconnect (Pause)'}
     </div>
     <div id="myDiv" />
 </div>
@@ -138,7 +145,6 @@
         left: -1000px;
         height: 100%;
         z-index: 0;
-
         transition: all 0.5s ease-in-out;
     }
     .visible {
@@ -150,6 +156,9 @@
         height: 100%;
     }
     .sensor-name {
+        display: flex;
+        align-items: center;
+
         color: #fff;
         position: absolute;
         font-size: 20px;
@@ -157,5 +166,8 @@
         top: 10px;
         left: 10px;
         cursor: pointer;
+    }
+    img {
+        margin-right: 10px;
     }
 </style>

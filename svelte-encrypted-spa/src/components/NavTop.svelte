@@ -21,7 +21,7 @@
 
     import { createEventDispatcher } from 'svelte/internal'
     import { goto } from 'svelte-pathfinder'
-    import Motor from './ControlPanel.svelte'
+    import ControlPanel from './ControlPanel.svelte'
 
     function handleTabClick(clickedTab) {
         selected = clickedTab
@@ -96,9 +96,10 @@
     </div>
 </div>
 
-{#if displayMotorControl}
+<!-- TODO: remove ! -->
+{#if !displayMotorControl}
     <div transition:fly={{ y: 0, x: 350, easing: linear }}>
-        <Motor />
+        <ControlPanel />
     </div>
 {/if}
 

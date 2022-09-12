@@ -19,7 +19,7 @@ function logger(module, func, type, message) {
 // Single object with preconfigured in client twincat connection data
 let plcManager = {
   client: new ads.Client({
-    targetAmsNetId: "192.168.137.95.1.1", // 169.254.113.74.1.1
+    targetAmsNetId: "169.254.113.74.1.1", //192.168.137.95.1.1
     targetAdsPort: 851,
   }),
 
@@ -312,7 +312,7 @@ let plcManager = {
         } catch {
           console.log("Already no active subscriptions");
         }
-      }, 0.5 * 60 * 1000);
+      }, 10 * 60 * 1000);
 
     console.log(`Subscribed status: ${readObj.success}`);
     return readObj;

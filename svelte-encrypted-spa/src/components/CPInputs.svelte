@@ -2,10 +2,11 @@
     import onOffSvg from '../assets/on-off.svg'
 
     import { Modals, closeModal, openModal, modals } from 'svelte-modals'
-    import { fade, fly } from 'svelte/transition'
+    import { fade, slide } from 'svelte/transition'
     import { circInOut, linear } from 'svelte/easing'
     import Modal from './Modal.svelte'
     import { allPlcVariables } from '../store/apiReadingCom'
+    import { opModes } from '../store/sensors'
 
     let newTestObj = {
         'GVL_InputHMI.e_OperationMode': 'A1',
@@ -24,6 +25,7 @@
     let configurationMessage = 'CONFIGURATOR'
     function handleConfigureTest() {
         if (
+            newTestObj['GVL_InputHMI.e_OperationMode'] != null &&
             newTestObj['GVL_InputHMI.rMinAirgap'] != null &&
             newTestObj['GVL_InputHMI.rMaxAirgap'] != null &&
             newTestObj['GVL_InputHMI.rAirgapStep'] != null &&
@@ -64,7 +66,6 @@
             newTestObj['GVL_InputHMI.rMaxCurrent'] != null &&
             newTestObj['GVL_InputHMI.rCurrentStep'] != null &&
             newTestObj['GVL_InputHMI.tWaitBeforeMeasurement'] != null &&
-            namingConvention.opMode != null &&
             namingConvention.versionNumber != null &&
             namingConvention.coilName != null
         ) {
@@ -75,14 +76,13 @@
     }
 
     let namingConvention = {
-        opMode: 'A1',
         versionNumber: null,
         coilName: null,
         date: generateDateString(),
     }
 
     $: newTestObj['GVL_InputHMI.sCSVName'] = objectsArePopulated()
-        ? `${namingConvention.opMode}\
+        ? `${newTestObj['GVL_InputHMI.e_OperationMode']}\
 _V${namingConvention.versionNumber}\
 _C${namingConvention.coilName}\
 _${namingConvention.date}\
@@ -93,9 +93,18 @@ _${newTestObj['GVL_InputHMI.rMinAirgap']}\
 _${newTestObj['GVL_InputHMI.rAirgapStep']}\
 _${newTestObj['GVL_InputHMI.rMaxAirgap']}`
         : ''
+
+    let opModeSelector = false
+
+    let selectedOpMode = 'A1'
+    function handleOpModeSelection(opMode) {
+        selectedOpMode = opMode
+        opModeSelector = false; 
+    }
 </script>
 
-{#if $allPlcVariables['GVL_OutputHMI.uiOverallMeasurements'] == 0}
+<!-- TODO: Remove ! from following line -->
+{#if $allPlcVariables['GVL_OutputHMI.uiOverallMeasurements'] != 0}
     <div class="part-name">Start new test</div>
 
     <div class="input-group">
@@ -175,7 +184,31 @@ _${newTestObj['GVL_InputHMI.rMaxAirgap']}`
     <div class="input-group">
         <div class="input-subfield">
             <div class="subtitle">Op. mode</div>
-            <div class="input-box"><div class="op-mode center">A1</div></div>
+            <div
+                on:click={() => {
+                    opModeSelector = !opModeSelector
+                }}
+                class="input-box"
+            >
+                <div class="op-mode center">{selectedOpMode}</div>
+            </div>
+
+            <!-- OpMode Dropdown selector -->
+            {#if opModeSelector}
+                <div transition:slide class="dropdown" style="margin-left: 0;">
+                    {#each opModes.filter((opMode) => opMode != selectedOpMode) as opMode}
+                        <div
+                            on:click={() => {
+                                handleOpModeSelection(opMode)
+                            }}
+                            class="selection"
+                        >
+                            {opMode}
+                        </div>
+                        <hr />
+                    {/each}
+                </div>
+            {/if}
         </div>
         <div class="input-subfield">
             <div class="subtitle">Version number</div>
@@ -243,6 +276,8 @@ _${newTestObj['GVL_InputHMI.rMaxAirgap']}`
         overflow-x: scroll;
         scrollbar-width: none;
         white-space: nowrap;
+        cursor: pointer;
+        user-select: none;
     }
     .op-mode::-webkit-scrollbar {
         display: none;
@@ -254,6 +289,7 @@ _${newTestObj['GVL_InputHMI.rMaxAirgap']}`
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        position: relative; 
     }
 
     .input-subfield {
@@ -308,5 +344,23 @@ _${newTestObj['GVL_InputHMI.rMaxAirgap']}`
         right: 0;
         left: 0;
         background: rgba(0, 0, 0, 0.5);
+    }
+    .dropdown{
+        cursor: pointer;
+        position: relative;
+        top: -5px;
+        width: 44px; 
+        padding: 5px 15px;
+        font-size: 20px;
+        background-color: #fff;
+        border-radius: 0px 0px 5px 5px;
+        z-index: 2;
+        color: #323232;
+    }
+    .selection{
+        text-align: center;
+        font-size: 22px;
+        font-weight: 500;
+        user-select: none;
     }
 </style>

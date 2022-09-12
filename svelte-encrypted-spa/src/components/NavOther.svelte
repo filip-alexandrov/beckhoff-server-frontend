@@ -3,7 +3,6 @@
         fullSensorData,
         sensorUnits,
         otherSensors,
-        temperatureSensors,
     } from '../store/sensors'
     import { createEventDispatcher } from 'svelte'
 
