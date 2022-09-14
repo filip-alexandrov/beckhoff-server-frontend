@@ -7,33 +7,74 @@
     import Modal from './Modal.svelte'
     import { allPlcVariables } from '../store/apiReadingCom'
     import { opModes } from '../store/sensors'
+    import CpDropdown from './CPDropdown.svelte'
 
-    let newTestObj = {
-        'GVL_InputHMI.e_OperationMode': 'A1',
-        'GVL_InputHMI.bEmergencyStop': false,
+    let opModeSelector = false
+    let selectedOpMode = 'A1'
+    function handleOpModeSelection(opMode) {
+        selectedOpMode = opMode
+        opModeSelector = false
+    }
 
-        'GVL_InputHMI.rMinAirgap': null,
-        'GVL_InputHMI.rMaxAirgap': null,
-        'GVL_InputHMI.rAirgapStep': null,
-        'GVL_InputHMI.rMinCurrent': null,
-        'GVL_InputHMI.rMaxCurrent': null,
-        'GVL_InputHMI.rCurrentStep': null,
-        'GVL_InputHMI.tWaitBeforeMeasurement': null,
-        'GVL_InputHMI.sCSVName': null,
+
+    let inductanceMeasurementText = 'Inductance'
+    let measureUpAndDownText = 'Up only'
+    
+    $: if (selectedOpMode == 'A2') {
+        newTestObj['GVL_InputHMI.bIsInductanceMeasurement'] =
+            inductanceMeasurementText == 'Inductance'
+        newTestObj['GVL_InputHMI.bMeasureJumpUpAndDown'] =
+            measureUpAndDownText != 'UP only'
+    }
+
+    let newTestObj = {}
+    $: switch (selectedOpMode) {
+        case 'A1':
+            newTestObj = {
+                'GVL_InputHMI.e_OperationMode': 'A1',
+                'GVL_InputHMI.bEmergencyStop': false,
+
+                'GVL_InputHMI.rMinAirgap': null,
+                'GVL_InputHMI.rMaxAirgap': null,
+                'GVL_InputHMI.rAirgapStep': null,
+                'GVL_InputHMI.rMinCurrent': null,
+                'GVL_InputHMI.rMaxCurrent': null,
+                'GVL_InputHMI.rCurrentStep': null,
+                'GVL_InputHMI.tWaitBeforeMeasurement': null,
+                'GVL_InputHMI.sCSVName': null,
+            }
+            break
+        case 'A2':
+            newTestObj = {
+                'GVL_InputHMI.e_OperationMode': 'A2',
+                'GVL_InputHMI.bEmergencyStop': false,
+
+                'GVL_InputHMI.rMinAirgap': null,
+                'GVL_InputHMI.rMaxAirgap': null,
+                'GVL_InputHMI.rAirgapStep': null,
+                'GVL_InputHMI.rMinCurrent': null,
+                'GVL_InputHMI.rMaxCurrent': null,
+                'GVL_InputHMI.rCurrentStep': null,
+                'GVL_InputHMI.tWaitBeforeMeasurement': null,
+                'GVL_InputHMI.sCSVName': null,
+
+                'GVL_InputHMI.bIsInductanceMeasurement': null,
+                'GVL_InputHMI.bMeasureJumpUpAndDown': null,
+            }
+            break
+
+        default:
+            break
     }
 
     let configurationMessage = 'CONFIGURATOR'
     function handleConfigureTest() {
         if (
-            newTestObj['GVL_InputHMI.e_OperationMode'] != null &&
-            newTestObj['GVL_InputHMI.rMinAirgap'] != null &&
-            newTestObj['GVL_InputHMI.rMaxAirgap'] != null &&
-            newTestObj['GVL_InputHMI.rAirgapStep'] != null &&
-            newTestObj['GVL_InputHMI.rMinCurrent'] != null &&
-            newTestObj['GVL_InputHMI.rMaxCurrent'] != null &&
-            newTestObj['GVL_InputHMI.rCurrentStep'] != null &&
-            newTestObj['GVL_InputHMI.tWaitBeforeMeasurement'] != null &&
-            newTestObj['GVL_InputHMI.sCSVName'] != null
+            (objectsArePopulated() &&
+                newTestObj['GVL_InputHMI.e_OperationMode'] == 'A1' &&
+                newTestObj['GVL_InputHMI.tWaitBeforeMeasurement'] != null) ||
+            (newTestObj['GVL_InputHMI.e_OperationMode'] == 'A2' &&
+                newTestObj['GVL_InputHMI.bIsInductanceMeasurement'] != null)
         ) {
             openModal(Modal, { newTestObj: newTestObj })
         } else {
@@ -93,14 +134,6 @@ _${newTestObj['GVL_InputHMI.rMinAirgap']}\
 _${newTestObj['GVL_InputHMI.rAirgapStep']}\
 _${newTestObj['GVL_InputHMI.rMaxAirgap']}`
         : ''
-
-    let opModeSelector = false
-
-    let selectedOpMode = 'A1'
-    function handleOpModeSelection(opMode) {
-        selectedOpMode = opMode
-        opModeSelector = false; 
-    }
 </script>
 
 <!-- TODO: Remove ! from following line -->
@@ -169,7 +202,11 @@ _${newTestObj['GVL_InputHMI.rMaxAirgap']}`
 
     <div class="input-group">
         <div class="input-subfield">
-            <div class="subtitle">Wait before measurement</div>
+            <div class="subtitle">
+                {selectedOpMode == 'A1'
+                    ? 'Wait before measurement'
+                    : 'Time per jump'}
+            </div>
             <div class="input-box">
                 <input
                     type="number"
@@ -179,6 +216,22 @@ _${newTestObj['GVL_InputHMI.rMaxAirgap']}`
                 />ms
             </div>
         </div>
+
+        {#if inductanceMeasurementText == 'Current Jump'}
+            <CpDropdown
+                bind:selected={measureUpAndDownText}
+                subtitle={'Meas. target'}
+                modes={['Up only', 'Up & Down']}
+            />
+        {/if}
+
+        {#if selectedOpMode == 'A2'}
+            <CpDropdown
+                bind:selected={inductanceMeasurementText}
+                subtitle={'Meas. type'}
+                modes={['Current Jump', 'Inductance']}
+            />
+        {/if}
     </div>
 
     <div class="input-group">
@@ -289,7 +342,7 @@ _${newTestObj['GVL_InputHMI.rMaxAirgap']}`
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        position: relative; 
+        position: relative;
     }
 
     .input-subfield {
@@ -345,11 +398,11 @@ _${newTestObj['GVL_InputHMI.rMaxAirgap']}`
         left: 0;
         background: rgba(0, 0, 0, 0.5);
     }
-    .dropdown{
+    .dropdown {
         cursor: pointer;
         position: relative;
         top: -5px;
-        width: 44px; 
+        width: 44px;
         padding: 5px 15px;
         font-size: 20px;
         background-color: #fff;
@@ -357,7 +410,7 @@ _${newTestObj['GVL_InputHMI.rMaxAirgap']}`
         z-index: 2;
         color: #323232;
     }
-    .selection{
+    .selection {
         text-align: center;
         font-size: 22px;
         font-weight: 500;
